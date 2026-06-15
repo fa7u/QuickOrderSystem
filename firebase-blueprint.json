@@ -1,0 +1,90 @@
+{
+  "entities": {
+    "Order": {
+      "title": "Order",
+      "description": "A customer order for the supermarket or restaurant.",
+      "type": "object",
+      "properties": {
+        "customerName": { "type": "string", "description": "Name of the customer" },
+        "customerPhone": { "type": "string", "description": "Phone number of the customer" },
+        "items": { "type": "string", "description": "The order details/items requested" },
+        "status": { 
+          "type": "string", 
+          "enum": ["pending", "accepted", "ready", "completed"],
+          "description": "Current status of the order" 
+        },
+        "createdAt": { "type": "string", "format": "date-time", "description": "When the order was placed" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Last update time" },
+        "handledBy": { "type": "string", "description": "ID of the staff who accepted/handled this order" },
+        "staffName": { "type": "string", "description": "Name of the staff who accepted/handled this order" }
+      },
+      "required": ["customerName", "customerPhone", "items", "status", "createdAt", "updatedAt"]
+    },
+    "Staff": {
+      "title": "Staff",
+      "description": "Information about a staff member (employee).",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Full name of the staff member" },
+        "passcode": { "type": "string", "description": "Login passcode for the staff member" },
+        "role": { "type": "string", "description": "Role of the staff member (e.g., Cashier, Chef)" },
+        "isActive": { "type": "boolean", "description": "Whether the staff member is currently active" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "When the staff member was added" }
+      },
+      "required": ["name", "role", "isActive", "createdAt"]
+    },
+    "Setting": {
+      "title": "Setting",
+      "description": "App settings like branding.",
+      "type": "object",
+      "properties": {
+        "restaurantName": { "type": "string", "description": "Name of the restaurant" }
+      }
+    },
+    "Organization": {
+      "title": "Organization",
+      "description": "A business using the platform.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Name of the organization" },
+        "ownerEmail": { "type": "string", "description": "Email of the store owner" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "ownerEmail", "createdAt"]
+    },
+    "BankAccount": {
+      "title": "BankAccount",
+      "description": "Information about a merchant bank account.",
+      "type": "object",
+      "properties": {
+        "bankName": { "type": "string", "description": "اسم البنك أو المصرف" },
+        "accountHolder": { "type": "string", "description": "اسم صاحب الحساب" },
+        "accountNumber": { "type": "string", "description": "رقم الحساب أو IBAN" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["bankName", "accountHolder", "accountNumber", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/organizations/{orgId}": {
+      "schema": "Organization",
+      "description": "Business entities"
+    },
+    "/organizations/{orgId}/orders/{orderId}": {
+      "schema": "Order",
+      "description": "Orders within an organization"
+    },
+    "/organizations/{orgId}/staff/{staffId}": {
+      "schema": "Staff",
+      "description": "Staff within an organization"
+    },
+    "/organizations/{orgId}/settings/{settingId}": {
+      "schema": "Setting",
+      "description": "Settings within an organization"
+    },
+    "/organizations/{orgId}/bank_accounts/{accountId}": {
+      "schema": "BankAccount",
+      "description": "Bank accounts for remote delivery payments within an organization"
+    }
+  }
+}

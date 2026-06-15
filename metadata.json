@@ -1,0 +1,8 @@
+{
+  "name": "Remix: QuickOrder - نظام بث الطلبات",
+  "description": "نظام وسيط رقمي للطلبات الفورية بين العملاء والموظفين مع تنبيهات صوتية ومتابعة حالة الطلب.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

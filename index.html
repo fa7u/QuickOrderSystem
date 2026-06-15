@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quick Order System</title>
+    <!-- Mobile App Settings for PWA and Add to Home Screen -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Quick Order System" />
+    <meta name="application-name" content="Quick Order System" />
+    
+    <!-- App Icons and Favicons -->
+    <link rel="icon" type="image/png" href="/logo.png" />
+    <link rel="shortcut icon" type="image/png" href="/logo.png" />
+    
+    <!-- iOS Add to Home Screen Icons (Replaces the letter 'Q') -->
+    <link rel="apple-touch-icon" href="/logo.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="/logo.png" />
+    <link rel="apple-touch-icon" sizes="167x167" href="/logo.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/logo.png" />
+    
+    <!-- Web App Manifest -->
+    <script>
+      (function() {
+        var link = document.createElement('link');
+        link.rel = 'manifest';
+        var search = window.location.search;
+        link.href = search ? ('/manifest.json' + search) : '/manifest.json';
+        document.head.appendChild(link);
+      })();
+    </script>
+    <meta name="theme-color" content="#020617" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+

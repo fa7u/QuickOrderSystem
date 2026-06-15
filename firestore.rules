@@ -1,0 +1,34 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 1. Organizations
+    match /organizations/{orgId} {
+      allow read, write: if true;
+    }
+
+    // 2. Orders subcollection
+    match /organizations/{orgId}/orders/{orderId} {
+      allow read, write: if true;
+    }
+
+    // 3. Staff subcollection
+    match /organizations/{orgId}/staff/{staffId} {
+      allow read, write: if true;
+    }
+
+    // 4. Settings/branding subcollection
+    match /organizations/{orgId}/settings/{settingId} {
+      allow read, write: if true;
+    }
+
+    // 5. Bank accounts subcollection
+    match /organizations/{orgId}/bank_accounts/{accountId} {
+      allow read, write: if true;
+    }
+
+    // Default deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

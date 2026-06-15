@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>العرض التجاري والملف التعريفي لـ QuickOrder SaaS - أصحاب المتاجر والمحلات</title>
+  <!-- Google Fonts for Elegant Arabic Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS via CDN for gorgeous visuals -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Cairo', 'sans-serif'],
+            mono: ['Fira Code', 'monospace']
+          },
+          colors: {
+            brand: {
+              50: '#f5f7ff',
+              100: '#ebf0ff',
+              500: '#4338ca', 
+              600: '#3730a3',
+              900: '#1e1b4b',
+              accent: '#06b6d4',
+              gold: '#f59e0b'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    @media print {
+      body {
+        background-color: white !important;
+        color: black !important;
+        font-size: 11pt;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .page-break {
+        page-break-before: always;
+        break-before: page;
+      }
+      .print-shadow-none {
+        box-shadow: none !important;
+        border: 1px solid #cbd5e1 !important;
+      }
+      .print-bg-white {
+        background-color: white !important;
+        background-image: none !important;
+      }
+      .print-text-dark {
+        color: #0f172a !important;
+      }
+      .print-border-dark {
+        border-color: #94a3b8 !important;
+      }
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #090d16;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e293b;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="bg-[#0b0f19] text-slate-100 font-sans leading-relaxed min-h-screen selection:bg-indigo-600 selection:text-white print-bg-white">
+
+  <!-- Header Banner / Floating Nav (No Print) -->
+  <div class="no-print bg-[#0e1424]/90 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50 px-4 py-3.5 shadow-lg shadow-[#020617]/50">
+    <div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-indigo-600 rounded-2xl flex items-center justify-center font-black text-white text-lg tracking-wider shadow-lg shadow-indigo-600/30">
+          QO
+        </div>
+        <div>
+          <h1 class="text-sm font-bold text-white">الملف التقديمي التجاري لـ QuickOrder SaaS</h1>
+          <p class="text-[10px] text-slate-400">ماتحتاجه لإقناع أصحاب المحلات والمتاجر بالاشتراك في منصتك المخصصة للبث الفوري للطلبات</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="window.print()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-2.5 px-5 rounded-xl transition duration-150 flex items-center gap-2 shadow-lg shadow-emerald-605/20 cursor-pointer">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+          طباعة أو حفظ كعرض PDF للبائعين 📄
+        </button>
+        <a href="/" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs py-2.5 px-4 rounded-xl transition duration-150">
+          العودة للتطبيق 🔙
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-4xl mx-auto px-4 py-8 sm:py-12">
+    <!-- Cover Presentation -->
+    <header class="text-center mb-12 relative">
+      <div class="absolute inset-0 bg-indigo-500/10 blur-3xl rounded-full w-80 h-80 mx-auto -top-10 z-0"></div>
+      <div class="relative z-10 space-y-4">
+        <div class="inline-flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs px-4 py-1.5 rounded-full font-bold">
+          💼 العرض التعريفي التجاري لزيادة مبيعاتك 0% عمولة
+        </div>
+        <h1 class="text-3xl sm:text-4xl font-black text-white leading-tight">
+          زيـادة أرباح المتاجر والمحلات مع منصة <br>
+          <span class="text-indigo-400 bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">QuickOrder SaaS</span>
+        </h1>
+        <p class="text-sm sm:text-base text-slate-300 max-w-2xl mx-auto leading-relaxed">
+          دليل العرض المميز لأصحاب المطاعم، المقاهي، الصيدليات، محلات التجزئة، ومختلف مجالات الخدمات والبيع بالتجزئة. استعد للتحول الرقمي الكامل بأقل كلفة واشتراك ثابت!
+        </p>
+      </div>
+    </header>
+
+    <!-- SECTION 1: Problem vs Solution -->
+    <section class="space-y-4 mb-12">
+      <div class="flex items-center gap-2.5 border-r-4 border-indigo-500 pr-3">
+        <span class="text-xl">💡</span>
+        <h2 class="text-xl font-extrabold text-white">١. المعادلة الصعبة: عمولات التطبيقات التقليدية ضد أرباحك</h2>
+      </div>
+      <div class="bg-[#121929] border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-6 print-shadow-none print-bg-white print-text-dark">
+        <p class="text-slate-300 text-sm leading-relaxed text-justify print-text-dark">
+          التجارة اليوم تعاني من استفراد تطبيقات التوصيل والوساطة التي تلتهم ما يصل إلى <strong>30%</strong> من هامش ربح التاجر عن كل طلب، بالإضافة إلى تأخر تسوية المستحقات واحتكار بيانات العميل. 
+          هنا يأتي دور <strong>QuickOrder SaaS</strong> كحل مستقل تماماً يعيد القوة والتحكم لصاحب المحل من خلال نموذج اشتراك ثابت وخالٍ تماماً من أية عمولات مبطنة.
+        </p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+          <div class="bg-[#090d16] p-5 rounded-2xl border border-rose-500/10 group hover:border-rose-500/25 transition duration-200">
+            <h3 class="text-sm font-bold text-rose-400 mb-2 flex items-center gap-2">
+              <span>❌</span> المشاكل مع التطبيقات التقليدية
+            </h3>
+            <ul class="text-xs text-slate-400 space-y-2 list-none pr-0 print-text-dark">
+              <li class="flex items-start gap-1.5"><span class="text-rose-500">•</span> عمولات مقتطعة باهظة (20% - 30%) مع كل مبيعة.</li>
+              <li class="flex items-start gap-1.5"><span class="text-rose-500">•</span> تأخير تسوية المبالغ النقدية وتجميد السيولة لأسابيع.</li>
+              <li class="flex items-start gap-1.5"><span class="text-rose-500">•</span> حجب معلومات العميل عنك ومنعك من استهدافه تسويقياً.</li>
+              <li class="flex items-start gap-1.5"><span class="text-rose-500">•</span> حاجة العميل لتنزيل وتثبيت تطبيقات ثقيلة للشراء.</li>
+            </ul>
+          </div>
+
+          <div class="bg-[#090d16] p-5 rounded-2xl border border-emerald-500/10 group hover:border-emerald-500/25 transition duration-200">
+            <h3 class="text-sm font-bold text-emerald-400 mb-2 flex items-center gap-2">
+              <span>🚀</span> الحلول والمكاسب مع QuickOrder
+            </h3>
+            <ul class="text-xs text-slate-400 space-y-2 list-none pr-0 print-text-dark">
+              <li class="flex items-start gap-1.5"><span class="text-emerald-400">•</span> <strong>صفر عمولة (0%)</strong> مقتطعة؛ الأرباح بالكامل بجيبك.</li>
+              <li class="flex items-start gap-1.5"><span class="text-emerald-400">•</span> <strong>تحصيل فوري ومباشر</strong> على حسابك البنكي أو محفظتك بلحظتها.</li>
+              <li class="flex items-start gap-1.5"><span class="text-emerald-400">•</span> <strong>قاعدة بيانات كاملة</strong> وسجل دقيق للاتصال بعملائك مجاناً.</li>
+              <li class="flex items-start gap-1.5"><span class="text-emerald-400">•</span> <strong>طلب فوري وسهل</strong> بمسح كود QR أو فتح رابط المتجر بـ 15 ثانية.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: Dynamic ROI Calculator & comparison -->
+    <section class="space-y-4 mb-12 page-break">
+      <div class="flex items-center gap-2.5 border-r-4 border-indigo-500 pr-3">
+        <span class="text-xl">💰</span>
+        <h2 class="text-xl font-extrabold text-white">٢. الفروقات المالية الملموسة لتوضيح حجم الوفر المالي لعملك</h2>
+      </div>
+      <div class="bg-[#121929] border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-6 print-shadow-none print-bg-white print-text-dark">
+        <h3 class="text-sm font-bold text-slate-200 print-text-dark">نموذج مقارنة مقارن للمبيعات بقيمة <span class="text-indigo-400 font-bold">$3,000</span> شهرياً (حوالي 12 مليون ريال يمني أو ما يعادلها):</h3>
+        
+        <div class="overflow-x-auto rounded-2xl border border-slate-800 print-border-dark">
+          <table class="w-full text-right text-xs">
+            <thead class="bg-[#090d16] text-slate-300 font-bold print-text-dark">
+              <tr>
+                <th class="p-3.5 border-b border-slate-800 print-border-dark">القيمة / النوع</th>
+                <th class="p-3.5 border-b border-slate-800 print-border-dark text-center text-rose-400">تطبيقات التوصيل والوساطة (عمولة 25%)</th>
+                <th class="p-3.5 border-b border-slate-800 print-border-dark text-center text-indigo-400">منصتك المستقلة QuickOrder SaaS</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800 text-slate-300 print-text-dark pr-2">
+              <tr>
+                <td class="p-3.5 font-bold">حجم المبيعات الإجمالي</td>
+                <td class="p-3.5 text-center font-mono text-slate-400">$3,000</td>
+                <td class="p-3.5 text-center font-mono text-slate-350">$3,000</td>
+              </tr>
+              <tr class="bg-[#0d1321]/50">
+                <td class="p-3.5 font-bold">العمولة المستقطعة</td>
+                <td class="p-3.5 text-center font-mono text-rose-500 font-bold">-$750 (عمولة)</td>
+                <td class="p-3.5 text-center font-mono text-emerald-400 font-bold">$0 (صفر عمولة!)</td>
+              </tr>
+              <tr>
+                <td class="p-3.5 font-bold">كلفة التشغيل / الاشتراك</td>
+                <td class="p-3.5 text-center font-mono text-slate-500">$0</td>
+                <td class="p-3.5 text-center font-mono text-indigo-300">-$29 (اشتراك باقة Pro الثابت)</td>
+              </tr>
+              <tr class="bg-indigo-950/20 font-bold text-sm">
+                <td class="p-3.5 text-indigo-300">الصافي بجيبك فوراً</td>
+                <td class="p-3.5 text-center font-mono text-rose-400">$2,250</td>
+                <td class="p-3.5 text-center font-mono text-emerald-400">$2,971</td>
+              </tr>
+              <tr class="bg-indigo-600/10 font-bold">
+                <td class="p-3.5 text-indigo-400">توفير وأموال إضافية</td>
+                <td class="p-3.5 text-center text-slate-500">-</td>
+                <td class="p-3.5 text-center font-mono text-emerald-400 text-sm">وفرت ربح صافي $721 شهرياً! 🎉</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="text-[11px] text-slate-400 text-center italic">تظهر لغة الأرقام بوضوح تام أن قيمة الاستثمار في الاشتراك الشهري يتم سدادها بالكامل بمجرد تمرير أول 2-3 مبيعات فقط بالمتجر!</p>
+      </div>
+    </section>
+
+    <!-- SECTION 3: System Loop -->
+    <section class="space-y-4 mb-12">
+      <div class="flex items-center gap-2.5 border-r-4 border-indigo-500 pr-3">
+        <span class="text-xl">🔄</span>
+        <h2 class="text-xl font-extrabold text-white">٣. السهولة اللحظية: واجهة مستخدم وعمليات بث فوري</h2>
+      </div>
+      <div class="bg-[#121929] border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-6 print-shadow-none print-bg-white print-text-dark">
+        <p class="text-slate-300 text-sm leading-relaxed print-text-dark">
+          تم تصميم النظام لكي يحافظ على أشد درجات البساطة للمستخدم والتاجر مع دمج التنبيهات الصوتية الحية:
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
+          <div class="bg-[#090d16] p-4 rounded-xl border border-slate-800">
+            <span class="text-lg block mb-1">✍️ ١. طلب العميل</span>
+            <p class="text-slate-400 leading-relaxed text-[11px]">يستعرض العميل منيو المنتجات، يحدد موقعه على الخريطة ويرسل الطلب.</p>
+          </div>
+          <div class="bg-[#090d16] p-4 rounded-xl border border-slate-800">
+            <span class="text-lg block mb-1">🔔 ٢. رنين للموظف</span>
+            <p class="text-slate-400 leading-relaxed text-[11px]">تطلق شاشة الموظفين تنبيهاً بالصوت ويدخل الطلب فوراً كبث حي ممتد.</p>
+          </div>
+          <div class="bg-[#090d16] p-4 rounded-xl border border-slate-800">
+            <span class="text-lg block mb-1">💳 ٣. دفع مباشر بلقطة</span>
+            <p class="text-slate-400 leading-relaxed text-[11px]">يرفع العميل صورة التحويل البنكي أو المحفظة الإلكترونية بعد إضافة الموظف لقيمة التوصيل.</p>
+          </div>
+          <div class="bg-[#0d2a22] p-4 rounded-xl border border-emerald-900/40">
+            <span class="text-lg block mb-1 text-emerald-400">🚀 ٤. اعتماد وتسليم</span>
+            <p class="text-slate-350 leading-relaxed text-[11px]">يفحص الموظف أو الإدارة صورة إشعار الحوالة ويعتمد الدفع للتوصيل وتجهيز الطلبيات.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: Our Pricing Packages -->
+    <section class="space-y-4 mb-12 page-break">
+      <div class="flex items-center gap-2.5 border-r-4 border-indigo-500 pr-3">
+        <span class="text-xl">🗳️</span>
+        <h2 class="text-xl font-extrabold text-white">٤. باقات التسعير والاشتراكات السنوية والشهرية المرنة</h2>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <!-- Package 1: Lite -->
+        <div class="bg-[#121929] border border-slate-800 rounded-3xl p-6 hover:border-indigo-500/20 transition duration-200 flex flex-col justify-between print-shadow-none print-bg-white print-text-dark">
+          <div>
+            <div class="text-xs font-bold text-slate-400 mb-1">للمتاجر متناهية الصغر والمبتدئين</div>
+            <h3 class="text-lg font-bold text-white mb-2">الباقة الأساسية (Standard Lite)</h3>
+            <div class="my-4">
+              <span class="text-3xl font-black text-white font-mono">$15</span>
+              <span class="text-xs text-slate-400">/ شهرياً</span>
+            </div>
+            <ul class="text-xs text-slate-350 space-y-2.5 mb-6">
+              <li class="flex items-center gap-2"><span>✓</span> لغاية 50 صنف أو منتج بالمنيو</li>
+              <li class="flex items-center gap-2"><span>✓</span> لغاية 200 طلبية شهرياً</li>
+              <li class="flex items-center gap-2"><span>✓</span> إضافة حساب بنكي أو محفظة رقمية 1</li>
+              <li class="flex items-center gap-2"><span>✓</span> لوحة معلومات وسجلات تفاعلية</li>
+            </ul>
+          </div>
+          <button class="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs py-2.5 rounded-xl transition">تفعيل باقة لايت 💬</button>
+        </div>
+
+        <!-- Package 2: Pro -->
+        <div class="bg-gradient-to-b from-[#16203a] to-[#0f172a] border-2 border-indigo-550 rounded-3xl p-6 shadow-xl shadow-indigo-650/10 flex flex-col justify-between relative print-shadow-none print-bg-white print-text-dark">
+          <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-indigo-600 text-white font-bold text-[9px] px-3.5 py-1 rounded-full uppercase tracking-wider">الأكثر مبيعاً ورواجاً ★</div>
+          <div>
+            <div class="text-xs font-bold text-indigo-300 mb-1 pt-2">للمتاجر النامية والمطاعم الكبيرة</div>
+            <h3 class="text-lg font-bold text-white mb-2">الباقة الاحترافية (Pro Growth)</h3>
+            <div class="my-4">
+              <span class="text-3xl font-black text-indigo-300 font-mono">$29</span>
+              <span class="text-xs text-slate-300">/ شهرياً</span>
+            </div>
+            <ul class="text-xs text-slate-200 space-y-2.5 mb-6">
+              <li class="flex items-center gap-2"><span>★</span> منتجات وأصناف وعناصر غير محدودة</li>
+              <li class="flex items-center gap-2"><span>★</span> عدد طلبيات وبث يومي مفتوح</li>
+              <li class="flex items-center gap-2"><span>★</span> إضافة وتخصيص حتى 5 حسابات مالية وبنوك</li>
+              <li class="flex items-center gap-2"><span>★</span> حسابات متعددة لطاقم العمل مجهزة بصفارات الرنين</li>
+              <li class="flex items-center gap-2"><span>★</span> تفعيل الموقع والخريطة وتتبع المناديب</li>
+            </ul>
+          </div>
+          <button class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs py-2.5 rounded-xl shadow-lg shadow-indigo-600/30 transition">اشتراك وتفعيل باقة برو 🚀</button>
+        </div>
+
+        <!-- Package 3: Enterprise -->
+        <div class="bg-[#121929] border border-slate-800 rounded-3xl p-6 hover:border-indigo-500/20 transition duration-200 flex flex-col justify-between print-shadow-none print-bg-white print-text-dark">
+          <div>
+            <div class="text-xs font-bold text-amber-500 mb-1">للماركات والشركات متعددة الفروع</div>
+            <h3 class="text-lg font-bold text-white mb-2">باقة النخبة (Enterprise VIP)</h3>
+            <div class="my-4">
+              <span class="text-3xl font-black text-amber-500 font-mono">$59</span>
+              <span class="text-xs text-slate-400">/ شهرياً</span>
+            </div>
+            <ul class="text-xs text-slate-350 space-y-2.5 mb-6">
+              <li class="flex items-center gap-2"><span>✓</span> كل مزايا الباقة الاحترافية (Pro)</li>
+              <li class="flex items-center gap-2"><span>✓</span> تعديل دومين خاص بمتجرك (yourbrand.com)</li>
+              <li class="flex items-center gap-2"><span>✓</span> حظر وحذف حقوق شعارات منصتنا بالكامل</li>
+              <li class="flex items-center gap-2"><span>✓</span> خادم سحابي مخصص ومحمي بشكل مشدد</li>
+              <li class="flex items-center gap-2"><span>✓</span> دعم فني وهندسي على مدار الساعة وعبر الخط الساخن</li>
+            </ul>
+          </div>
+          <button class="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs py-2.5 rounded-xl transition">تحدث معنا لباقة VIP 👑</button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 5: FAQs -->
+    <section class="space-y-4 mb-12">
+      <div class="flex items-center gap-2.5 border-r-4 border-indigo-500 pr-3">
+        <span class="text-xl">❓</span>
+        <h2 class="text-xl font-extrabold text-white">٥. أسئلة متيقنة تدور ببالك بصفتك صاحب محل</h2>
+      </div>
+      <div class="bg-[#121929] border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-4 print-shadow-none print-bg-white print-text-dark text-xs sm:text-sm">
+        
+        <div class="space-y-2">
+          <h4 class="font-bold text-indigo-300">س: هل من الممكن تتبع الطلبات والمحادثة المباشرة مع موظفي فريقي؟</h4>
+          <p class="text-slate-400 text-xs">ج: نعم، يتوفر واجهة تتبع في الوقت الحقيقي تسمح للعميل والموظفين بمتابعة كل حركة وتعديل، مع دردشة فورية مدمجة للتأكيد والمفاصلة بسرعة.</p>
+        </div>
+        <hr class="border-slate-800 py-1">
+        <div class="space-y-2">
+          <h4 class="font-bold text-indigo-300">س: ما الفارق المباشر بين هذه والمنصات الأخرى غير العمولة؟</h4>
+          <p class="text-slate-400 text-xs">ج: نقوم بتوفير صفحة نظام تزامنية خفيفة لعملائك لا تثقل هواتفهم بالتحميل، مع رنين تشغيلي للموظفين وسرعة تتبع عالية تضمن سلامة عمليات المبيعات وإدخال الأرصدة للبنوك بكل أمن وتكامل.</p>
+        </div>
+        <hr class="border-slate-800 py-1">
+        <div class="space-y-2">
+          <h4 class="font-bold text-indigo-300">س: هل بيانات عملائي وأرباح وسجل مبيعاتي في أمان تام من المنافسين؟</h4>
+          <p class="text-slate-400 text-xs">ج: نعم وبنسبة 100%! تم تطبيق بروتوكولات حماية وقوانين حوكمة قواعد البيانات الصارمة (Firestore Rules) لضمان عزل وتعمية كاملة لكل حساب متجر وعمليات المبيعات، بخصوصية وسرية بالغة.</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- FOOTER / CALL TO ACTION -->
+    <footer class="text-center text-slate-400 text-xs border-t border-slate-800 pt-8 space-y-4">
+      <p class="text-slate-300">جاهز للتخلص من استنزاف أرباحك وتنمية علامتك التجارية المستقلة؟</p>
+      <div class="flex justify-center gap-3">
+        <a href="/" class="bg-indigo-650 hover:bg-indigo-600 bg-indigo-600 text-white font-bold text-xs py-2 px-6 rounded-xl hover:shadow-lg transition">ابدأ مجاناً الآن 🚀</a>
+      </div>
+      <p class="font-mono text-[10px] text-slate-500 pt-4">© QuickOrder SaaS Presentation - 2026</p>
+    </footer>
+  </div>
+
+</body>
+</html>

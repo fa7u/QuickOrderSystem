@@ -1,0 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Inter:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Cairo", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+body {
+  @apply font-sans bg-slate-950 text-slate-200;
+}
+
+/* 
+  Fix Arabic font letter spacing:
+  Using Tailwind's letter-spacing utility classes (e.g. tracking-tight, tracking-tighter) 
+  separates Arabic letters and renders strange gaps. We reset letter-spacing and word-spacing
+  for Arabic layouts globally except for font-mono elements.
+*/
+[dir="rtl"], 
+:lang(ar),
+[dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3, [dir="rtl"] h4, [dir="rtl"] h5, [dir="rtl"] h6, 
+[dir="rtl"] p, [dir="rtl"] span, [dir="rtl"] button, [dir="rtl"] div {
+  &:not(.font-mono):not([class*="font-mono"]) {
+    letter-spacing: 0 !important;
+    word-spacing: normal !important;
+  }
+}
+
+.markdown-body {
+  @apply text-slate-300;
+}
