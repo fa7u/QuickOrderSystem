@@ -465,13 +465,174 @@ async function startServer() {
       server: { middlewareMode: true },
       appType: "spa",
     });
+
+    // Dynamic HTML interceptor in dev mode
+    app.get(["/", "/index.html"], async (req, res, next) => {
+      let orgId = req.query.orgId as string;
+      let view = req.query.view as string || "customer";
+
+      // Parse cookie parameters if absent in query
+      const cookies: Record<string, string> = {};
+      if (req.headers.cookie) {
+        req.headers.cookie.split(";").forEach((cookie) => {
+          const parts = cookie.split("=");
+          if (parts.length >= 2) {
+            const name = parts[0].trim();
+            cookies[name] = decodeURIComponent(parts.slice(1).join("=").trim());
+          }
+        });
+      }
+
+      if (!orgId) orgId = cookies["quickorder_last_org_id"];
+      if (!view) view = cookies["quickorder_last_view"] || "customer";
+
+      const indexPath = path.join(process.cwd(), "index.html");
+      if (!fs.existsSync(indexPath)) {
+        return next();
+      }
+
+      try {
+        let rawHtml = fs.readFileSync(indexPath, "utf-8");
+        // Run Vite HTML transform
+        let html = await vite.transformIndexHtml(req.url, rawHtml);
+
+        const manifestUrl = orgId 
+          ? `/manifest.json?orgId=${encodeURIComponent(orgId)}&view=${encodeURIComponent(view)}`
+          : "/manifest.json";
+
+        // Inject the exact dynamic manifest URL
+        html = html.replace(
+          /<link id="pwa-manifest" rel="manifest" href="[^"]*"\s*\/?>/i,
+          `<link id="pwa-manifest" rel="manifest" href="${manifestUrl}" />`
+        );
+
+        // Fetch custom logo if professional tier
+        let logoUrl = "/logo.png";
+        let isTier3 = false;
+
+        if (orgId && db) {
+          try {
+            const orgDocRef = doc(db, "organizations", orgId);
+            const orgDocSnap = await getDoc(orgDocRef);
+            if (orgDocSnap.exists()) {
+              const oData = orgDocSnap.data();
+              const subscriptionTier = oData.subscriptionTier || oData.subscriptionPlan || "tier1";
+              if (subscriptionTier === "tier3") {
+                isTier3 = true;
+                const brandingDocRef = doc(db, "organizations", orgId, "settings", "branding");
+                const brandingDocSnap = await getDoc(brandingDocRef);
+                if (brandingDocSnap.exists()) {
+                  const bData = brandingDocSnap.data();
+                  if (bData && bData.logoUrl) {
+                    logoUrl = bData.logoUrl;
+                  }
+                }
+              }
+            }
+          } catch (dbErr) {
+            console.error("Failed to query branding in server-side index.html serving:", dbErr);
+          }
+        }
+
+        if (isTier3 && logoUrl && logoUrl !== "/logo.png") {
+          html = html.replace(
+            /<link rel="apple-touch-icon"[^>]*href="[^"]*"[^>]*>/gi,
+            `<link rel="apple-touch-icon" href="${logoUrl}" />`
+          );
+        }
+
+        res.status(200).set({ "Content-Type": "text/html" }).end(html);
+      } catch (err) {
+        next(err);
+      }
+    });
+
     app.use(vite.middlewares);
   } else {
-    const distPath = path.join(process.cwd(), 'dist');
+    const distPath = path.join(process.cwd(), "dist");
     if (fs.existsSync(distPath)) {
+      // Dynamic HTML interceptor in production mode (MUST run BEFORE express.static)
+      app.get(["/", "/index.html"], async (req, res) => {
+        let orgId = req.query.orgId as string;
+        let view = req.query.view as string || "customer";
+
+        const cookies: Record<string, string> = {};
+        if (req.headers.cookie) {
+          req.headers.cookie.split(";").forEach((cookie) => {
+            const parts = cookie.split("=");
+            if (parts.length >= 2) {
+              const name = parts[0].trim();
+              cookies[name] = decodeURIComponent(parts.slice(1).join("=").trim());
+            }
+          });
+        }
+
+        if (!orgId) orgId = cookies["quickorder_last_org_id"];
+        if (!view) view = cookies["quickorder_last_view"] || "customer";
+
+        const indexPath = path.join(distPath, "index.html");
+        if (!fs.existsSync(indexPath)) {
+          return res.status(404).send("index.html not found");
+        }
+
+        try {
+          let html = fs.readFileSync(indexPath, "utf-8");
+
+          const manifestUrl = orgId 
+            ? `/manifest.json?orgId=${encodeURIComponent(orgId)}&view=${encodeURIComponent(view)}`
+            : "/manifest.json";
+
+          // Inject the exact dynamic manifest URL
+          html = html.replace(
+            /<link id="pwa-manifest" rel="manifest" href="[^"]*"\s*\/?>/i,
+            `<link id="pwa-manifest" rel="manifest" href="${manifestUrl}" />`
+          );
+
+          // Fetch custom logo if professional tier
+          let logoUrl = "/logo.png";
+          let isTier3 = false;
+
+          if (orgId && db) {
+            try {
+              const orgDocRef = doc(db, "organizations", orgId);
+              const orgDocSnap = await getDoc(orgDocRef);
+              if (orgDocSnap.exists()) {
+                const oData = orgDocSnap.data();
+                const subscriptionTier = oData.subscriptionTier || oData.subscriptionPlan || "tier1";
+                if (subscriptionTier === "tier3") {
+                  isTier3 = true;
+                  const brandingDocRef = doc(db, "organizations", orgId, "settings", "branding");
+                  const brandingDocSnap = await getDoc(brandingDocRef);
+                  if (brandingDocSnap.exists()) {
+                    const bData = brandingDocSnap.data();
+                    if (bData && bData.logoUrl) {
+                      logoUrl = bData.logoUrl;
+                    }
+                  }
+                }
+              }
+            } catch (dbErr) {
+              console.error("Failed to query branding in server-side index.html serving:", dbErr);
+            }
+          }
+
+          if (isTier3 && logoUrl && logoUrl !== "/logo.png") {
+            html = html.replace(
+              /<link rel="apple-touch-icon"[^>]*href="[^"]*"[^>]*>/gi,
+              `<link rel="apple-touch-icon" href="${logoUrl}" />`
+            );
+          }
+
+          res.status(200).set({ "Content-Type": "text/html" }).end(html);
+        } catch (err) {
+          console.error("Error tailoring index.html:", err);
+          res.sendFile(indexPath);
+        }
+      });
+
       app.use(express.static(distPath));
-      app.get('*', (req, res) => {
-        res.sendFile(path.join(distPath, 'index.html'));
+      app.get("*", (req, res) => {
+        res.sendFile(path.join(distPath, "index.html"));
       });
     }
   }
