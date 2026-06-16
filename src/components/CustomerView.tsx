@@ -952,11 +952,11 @@ export default function CustomerView({ orgId }: { orgId: string }) {
             
             {/* Elegant logo wrapper */}
             <div className={cn(
-              "w-16 h-16 rounded-[1.25rem] flex items-center justify-center mb-4 relative z-10 shadow-lg border overflow-hidden p-1.5 transition-all duration-500 group-hover:scale-[1.03]",
-              finalLogoUrl ? "bg-white border-white/40" : "bg-white/10 backdrop-blur-md border-white/20"
+              "w-16 h-16 rounded-[1.25rem] flex items-center justify-center mb-4 relative z-10 shadow-lg border overflow-hidden transition-all duration-500 group-hover:scale-[1.03]",
+              finalLogoUrl ? "p-0 bg-white border-white/40" : "p-1.5 bg-white/10 backdrop-blur-md border-white/20"
             )}>
               {finalLogoUrl ? (
-                <img src={finalLogoUrl} alt="الشعار" className="w-full h-full object-contain rounded-lg" referrerPolicy="no-referrer" />
+                <img src={finalLogoUrl} alt="الشعار" className="w-full h-full object-cover rounded-[1.25rem]" referrerPolicy="no-referrer" />
               ) : (
                 (() => {
                   const IconCompName = (() => {
@@ -983,11 +983,6 @@ export default function CustomerView({ orgId }: { orgId: string }) {
               )}
             </div>
             
-            {/* Online Status Label */}
-            <div className="mb-2.5 z-10 flex items-center gap-1.5 px-3 py-1 bg-black/20 backdrop-blur-md border border-white/10 rounded-full">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span className="text-[9px] font-bold text-white tracking-wide">نظام فوري مفعّل</span>
-            </div>
 
             <h1 className="text-xl sm:text-2xl font-black relative z-10 leading-tight mb-2 text-white font-sans tracking-tight" dir="rtl">
                {finalRestaurantName}
@@ -1974,12 +1969,11 @@ export default function CustomerView({ orgId }: { orgId: string }) {
                 {/* Name Input */}
                 <div className="space-y-2">
                   <label className="text-[10px] uppercase tracking-normal font-bold text-slate-500 flex items-center gap-2">
-                    <User className={cn("w-3 h-3", theme.textAccent)} /> اسمك الثلاثي/الكريم
+                    <User className={cn("w-3 h-3", theme.textAccent)} /> الاسم الثلاثي
                   </label>
                   <input
                     required
                     type="text"
-                    placeholder="اكتب اسمك الثلاثي هنا للتعرف الفوري على طلبك..."
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     className={cn(
@@ -2008,7 +2002,7 @@ export default function CustomerView({ orgId }: { orgId: string }) {
                       type="tel"
                       pattern="[0-9]*"
                       inputMode="numeric"
-                      placeholder="7xxxxxxxx أو 5xxxxxxxx"
+                      placeholder={countryPrefix === "966" ? "5xxxxxxxx" : "7xxxxxxxx"}
                       value={rawPhone}
                       onChange={(e) => setRawPhone(e.target.value.replace(/\D/g, ""))}
                       className={cn(
@@ -2236,18 +2230,6 @@ export default function CustomerView({ orgId }: { orgId: string }) {
           </div>
         </div>
       </motion.div>
-      <div className="mt-8 flex flex-col items-center gap-4 relative z-10">
-        <button 
-          onClick={() => {
-            const url = new URL(window.location.href);
-            url.searchParams.set('view', 'admin');
-            window.location.href = url.toString();
-          }}
-          className="text-slate-705 hover:text-slate-500 text-[10px] font-black uppercase tracking-wider transition-colors bg-slate-900/40 border border-slate-850 px-4 py-1.5 rounded-full backdrop-blur-md"
-        >
-          🔐 دخول إدارة الكادر (Owner Access)
-        </button>
-      </div>
       <Footer />
     </div>
   );
