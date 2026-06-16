@@ -502,7 +502,7 @@ export default function ProposalView({ onBack, onNavigateToView }: ProposalViewP
                     </li>
                     <li className="flex items-center gap-2 text-slate-350">
                       <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                      <span>دردشة حية داخل الصفحة لعملاء متجرك (كوتة 50/شهر)</span>
+                      <span>دردشة حية داخل الصفحة لعملاء متجرك (كوتة 50/شهر) مع تواصل واتساب فوق 50 المحادثة</span>
                     </li>
                     <li className="flex items-center gap-2 text-slate-350">
                       <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
@@ -608,7 +608,7 @@ export default function ProposalView({ onBack, onNavigateToView }: ProposalViewP
                     <span>سياسة الحفظ التلقائي: 30 يوماً ⏱️</span>
                   </div>
                   <p className="text-[10px] text-slate-450 leading-relaxed">
-                    أعلى حماية للأرشفة السحابية والقدرات الإحصائية. نحفظ لك جميع المبيعات والطلبيات السابقة لمدة تصل إلى 30 يوماً للرجوع لدفافرك الحالية، وتصديرها بضغطة زر.
+                    أعلى حماية للأرشفة السحابية والقدرات الإحصائية. نحفظ لك جميع المبيعات والطلبيات السابقة لمدة تصل إلى 30 يوماً للرجوع لدفاترك الحالية، وتصديرها بضغطة زر.
                   </p>
                 </div>
               </div>
@@ -716,7 +716,7 @@ export default function ProposalView({ onBack, onNavigateToView }: ProposalViewP
                 <tr>
                   <td className="p-5 font-bold text-white">الدردشة الحية مباشرة على الويب</td>
                   <td className="p-5 text-slate-500">واتساب مباشر فقط</td>
-                  <td className="p-5">✅ 50 محادثة/شهرية فقط</td>
+                  <td className="p-5">✅ 50 محادثة/شهرية وتواصل واتساب فوق 50 المحادثة</td>
                   <td className="p-5 text-emerald-400 font-bold">✅ محادثات فورية بلا حدود</td>
                 </tr>
                 <tr>

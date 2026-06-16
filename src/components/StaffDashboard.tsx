@@ -677,14 +677,14 @@ export default function StaffDashboard({ orgId, isPlatformOwner = false }: { org
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-950 border-t-4 border-emerald-500">
+      <div className="min-h-screen flex items-center justify-center bg-slate-950">
         <div className="text-center">
           <motion.div 
             animate={{ rotate: 360 }}
             transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-            className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full mx-auto mb-4 shadow-[0_0_15px_rgba(16,185,129,0.3)]"
+            className="w-10 h-10 border-2 border-indigo-500 border-t-transparent rounded-full mx-auto mb-4"
           />
-          <h2 className="text-xl font-bold font-mono text-white">INITIALIZING SYSTEM...</h2>
+          <h2 className="text-sm font-bold text-slate-400">جاري تحميل واجهة العمليات الفورية...</h2>
         </div>
       </div>
     );
@@ -1225,15 +1225,13 @@ export default function StaffDashboard({ orgId, isPlatformOwner = false }: { org
         </main>
 
         {/* Footer Status Bar */}
-        <footer className="h-8 bg-slate-900 border-t border-slate-800 px-4 flex items-center justify-between shrink-0 font-mono text-[10px] text-slate-500">
-          <div className="flex gap-6">
-            <span className="hidden sm:inline">OS: BROADCAST-X v2.4</span>
-            <span>LATENCY: 18ms</span>
-            <span className="hidden sm:inline">DB_LOAD: 4%</span>
+        <footer className="h-10 bg-slate-900/60 border-t border-slate-850 px-6 flex items-center justify-between shrink-0 text-[10px] text-slate-450">
+          <div className="flex items-center gap-2">
+            <span className="font-sans font-bold text-slate-400">بوابة الموظف النشطة</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-slate-400 font-bold">ALL SYSTEMS OPERATIONAL</span>
-            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div>
+            <span className="text-slate-500 font-bold font-sans">تزامن مباشر وقوي عبر السحاب</span>
+            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
           </div>
         </footer>
         <Footer />
@@ -1242,12 +1240,13 @@ export default function StaffDashboard({ orgId, isPlatformOwner = false }: { org
       {/* Interactive Status Detailed Popups */}
       <AnimatePresence>
         {selectedStatusModal && (
-          <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-40 flex items-center justify-center p-4 shadow-2xl" dir="rtl">
+          <div className="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-45 flex items-end md:items-center justify-center p-0 md:p-4 shadow-2xl" dir="rtl">
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 15 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 15 }}
-              className="w-full max-w-4xl bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl relative flex flex-col max-h-[90vh]"
+              initial={{ opacity: 0, y: "20%" }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: "20%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 220 }}
+              className="w-full h-[100dvh] md:h-auto md:max-h-[85vh] md:max-w-4xl bg-slate-900 border-0 md:border border-slate-800 rounded-none md:rounded-3xl p-5 md:p-6 shadow-2xl relative flex flex-col"
             >
               {/* Header */}
               <div className="flex justify-between items-center pb-4 border-b border-slate-800 shrink-0 mb-4 gap-4">

@@ -336,12 +336,12 @@ export default function App() {
     if (isExpired && !isSuperAdmin) {
       return (
         <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-8 text-center text-white" dir="rtl">
-          <div className="w-20 h-20 bg-red-500/10 border border-red-500/20 text-red-500 rounded-[2rem] flex items-center justify-center mb-6 shadow-2xl">
+          <div className="w-20 h-20 bg-red-500/10 border border-red-500/20 text-red-400 rounded-3xl flex items-center justify-center mb-6 shadow-2xl">
             <Store className="w-10 h-10" />
           </div>
-          <h1 className="text-2xl font-black text-white mb-3">المتجر مغلق مؤقتاً ⚠️</h1>
-          <p className="text-slate-400 max-w-md leading-relaxed text-sm">
-            نعتذر منك، لقد انتهت فترة الاشتراك أو التجربة لمتجر <strong className="text-white font-extrabold">{orgData.name}</strong>. يرجى التواصل مع إدارة المتجر لمتابعة تفعيل الخدمة.
+          <h1 className="text-xl sm:text-2xl font-black text-white mb-3">المتجر مغلق مؤقتاً ⚠️</h1>
+          <p className="text-slate-400 max-w-md leading-relaxed text-xs sm:text-sm">
+            نعتذر منك، لقد انتهت فترة الاشتراك أو التجربة لمتجر <strong className="text-white font-extrabold">{orgData.name}</strong>. يرجى التواصل مع إدارة المتجر لمتابعة تفعيل الخدمة والوصول إلى لوحة التحكم.
           </p>
         </div>
       );
@@ -353,41 +353,51 @@ export default function App() {
 
   // Fallback for no store or unknown state
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4 text-white relative overflow-hidden" dir="rtl">
-      {/* Background decorations */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl -z-10"></div>
-      <div className="absolute bottom-1/4 left-1/3 -translate-y-1/2 w-72 h-72 bg-purple-500/5 rounded-full blur-3xl -z-10"></div>
+    <div className="min-h-screen bg-slate-950 text-slate-200 font-sans flex flex-col items-center justify-center p-4 sm:p-6 relative overflow-hidden" dir="rtl">
+      {/* Exquisite custom ambient organic blurred structures for high-end boutique finish */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none opacity-25 select-none md:block hidden">
+        <div className="absolute top-[15%] left-[20%] w-[35%] h-[35%] bg-indigo-600/10 rounded-full blur-[110px]"></div>
+        <div className="absolute bottom-[20%] right-[15%] w-[40%] h-[40%] bg-indigo-505/5 rounded-full blur-[130px]"></div>
+      </div>
 
-      <div className="max-w-2xl w-full bg-slate-900 border border-slate-800/85 rounded-[3rem] p-8 md:p-12 shadow-2xl flex flex-col items-center text-center">
-        <div className="w-24 h-24 bg-slate-950/60 rounded-[2rem] border border-slate-800 flex items-center justify-center mb-8 shadow-2xl overflow-hidden p-0.5 group hover:border-emerald-500/30 transition-all duration-300">
-          <img src={logoUrl} alt="Quick Order Logo" className="w-full h-full object-cover rounded-[1.85rem] transform group-hover:scale-105 transition-transform duration-500" referrerPolicy="no-referrer" />
+      <div className="max-w-3xl w-full bg-slate-900/45 backdrop-blur-3xl border border-slate-800/80 rounded-[2.5rem] p-6 sm:p-12 shadow-[0_32px_65px_-12px_rgba(0,0,0,0.85)] flex flex-col items-center text-center relative z-10">
+        <div className="absolute top-0 right-0 left-0 h-[1.5px] bg-gradient-to-r from-transparent via-indigo-550/30 to-transparent"></div>
+
+        <div className="w-20 h-20 sm:w-24 sm:h-24 bg-slate-950 rounded-[2rem] border border-slate-850 flex items-center justify-center mb-8 shadow-2xl overflow-hidden p-1 group hover:border-slate-750 transition-all duration-300">
+          <img src={logoUrl} alt="Quick Order Logo" className="w-full h-full object-cover rounded-2xl transform group-hover:scale-105 transition-transform duration-500" referrerPolicy="no-referrer" />
         </div>
         
-        <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-normal text-white">
-          نظام الطلب السريع <span className="text-indigo-500 font-mono italic text-2xl md:text-3xl block md:inline mt-1 md:mt-0">Quick Order</span>
+        <h1 className="text-2xl sm:text-4xl font-black tracking-tight leading-normal text-slate-100 font-sans">
+          نظام تلقي ومعالجة الطلبات الفوري <span className="text-indigo-400 font-mono italic text-xl sm:text-2xl block sm:inline mt-2 sm:mt-0">Quick Order</span>
         </h1>
-        <p className="text-slate-400 mt-4 leading-relaxed max-w-lg font-medium text-sm md:text-base">
-          المنصة السحابية المبتكرة لتفعيل قوائم الطعام الرقمية عبر الـ QR وبث الطلبات بشكل فوري مباشر للعملاء والموظفين.
+        <p className="text-slate-450 mt-4 leading-relaxed max-w-lg font-bold text-xs sm:text-sm">
+          المنصة السحابية الاحترافية المتكاملة لتمكين المنشآت الخدمية وعيادات الخدمات من إعداد روابط تلقي وتتبع الطلبات المباشرة، مع بث إشعارات التنبيه الصوتية بمجرد إرسال العميل لطلبه.
         </p>
 
         {/* Feature Highlights Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full mt-10 text-right">
-          <div className="p-5 bg-slate-950/40 rounded-2xl border border-slate-800/40">
-            <h3 className="font-extrabold text-white text-sm mb-2 text-indigo-400">⚡ قائمة الـ QR الذكية</h3>
-            <p className="text-slate-500 text-xs leading-relaxed">
-              تصفح سريع مع تحديد وإرسال الطلبات مباشرة من طاولة العميل بكل سهولة.
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full mt-10 text-right">
+          <div className="p-5 bg-slate-950/50 rounded-2xl border border-slate-850 hover:border-slate-800 transition-all duration-300">
+            <h3 className="font-extrabold text-[13px] text-indigo-400 mb-2.5 flex items-center gap-1.5">
+              <span>⚡ تدوين الطلب فوراً</span>
+            </h3>
+            <p className="text-slate-500 text-xs leading-relaxed font-semibold">
+              يستطيع العميل كتابة مواصفات طلبه ومرفقاته وتحديث وسيلة تسليمه أو موقعه بدقة مطلقة دون الحاجة للانتظار.
             </p>
           </div>
-          <div className="p-5 bg-slate-950/40 rounded-2xl border border-slate-800/40">
-            <h3 className="font-extrabold text-white text-sm mb-2 text-emerald-400">📋 شاشات الموظفين</h3>
-            <p className="text-slate-500 text-xs leading-relaxed">
-              تحضير الطلبات ثانية بثانية مع إشعارات صوتية فورية لتجهيز وإرسال الطلبات.
+          <div className="p-5 bg-slate-950/50 rounded-2xl border border-slate-850 hover:border-slate-800 transition-all duration-300">
+            <h3 className="font-extrabold text-[13px] text-emerald-400 mb-2.5 flex items-center gap-1.5">
+              <span>📋 إشعار جرس مستمر</span>
+            </h3>
+            <p className="text-slate-500 text-xs leading-relaxed font-semibold">
+              يصدر النظام نغمة صفارة تنبيه تفاعلية مستمرة لا تتوقف بمحطات العمل فور وصول أي طلب جديد للبدء بالتحضير.
             </p>
           </div>
-          <div className="p-5 bg-slate-950/40 rounded-2xl border border-slate-800/40">
-            <h3 className="font-extrabold text-white text-sm mb-2 text-purple-400">🛡️ لوحة تحكم الإدارة</h3>
-            <p className="text-slate-500 text-xs leading-relaxed">
-              تحليلات فورية، إدارة شاملة للطاولات والموظفين وعناصر القائمة بروعة.
+          <div className="p-5 bg-slate-950/50 rounded-2xl border border-slate-850 hover:border-slate-800 transition-all duration-300">
+            <h3 className="font-extrabold text-[13px] text-purple-400 mb-2.5 flex items-center gap-1.5">
+              <span>🛡️ إدارة حرة موحدة</span>
+            </h3>
+            <p className="text-slate-500 text-xs leading-relaxed font-semibold">
+              نظام تشغيلي متكامل لجدولة العمليات، وتصدير التقارير، وتخصيص هوية ورسائل المنشأة، وتدقيق حوالات البنك.
             </p>
           </div>
         </div>
@@ -399,7 +409,7 @@ export default function App() {
                 setOrgId(null);
                 setView('superadmin');
               }}
-              className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-black py-4 px-8 rounded-2xl transition-all shadow-lg shadow-indigo-600/25 active:scale-[0.98]"
+              className="w-full bg-indigo-650 hover:bg-indigo-600 text-white font-black py-4 px-8 rounded-2xl transition-all duration-300 shadow-[0_8px_24px_-4px_rgba(99,102,241,0.25)] active:scale-[0.98] text-xs sm:text-sm select-none"
             >
               إدارة المنصة الرئيسية
             </button>
@@ -409,19 +419,19 @@ export default function App() {
                 setOrgId(null);
                 setView('admin');
               }}
-              className="w-full bg-slate-800 hover:bg-slate-700 text-white font-black py-4 px-8 rounded-2xl transition-all active:scale-[0.98]"
+              className="w-full bg-slate-950/80 border border-slate-850 hover:bg-slate-900 text-slate-300 hover:text-white font-black py-4 px-8 rounded-2xl transition-all duration-300 shadow-lg active:scale-[0.98] text-xs sm:text-sm select-none"
             >
-              لوحة تحكم الإدارة
+              دخول بوابة الإدارة
             </button>
           )}
           <button 
             onClick={() => {
               setView('proposal');
             }}
-            className="w-full bg-gradient-to-r from-indigo-700 to-indigo-600 hover:from-indigo-600 hover:to-indigo-500 text-white font-black py-4 px-8 rounded-2xl transition-all shadow-lg shadow-indigo-600/20 active:scale-[0.98] flex items-center justify-center gap-2"
+            className="w-full bg-indigo-600 hover:bg-indigo-550 text-white font-black py-4 px-8 rounded-2xl transition-all duration-300 shadow-[0_8px_24px_-4px_rgba(99,102,241,0.3)] active:scale-[0.98] flex items-center justify-center gap-2 text-xs sm:text-sm select-none"
           >
-            <FileText className="w-5 h-5 text-indigo-300" />
-            <span>عرض دراسة الجدوى ومزايا الباقات</span>
+            <FileText className="w-4 h-4 text-indigo-300 shrink-0" />
+            <span>دراسة الجدوى وباقات الاشتراك</span>
           </button>
         </div>
       </div>

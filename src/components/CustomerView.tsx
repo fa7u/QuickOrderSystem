@@ -932,56 +932,67 @@ export default function CustomerView({ orgId }: { orgId: string }) {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4 relative overflow-hidden">
-      {/* Background decoration for desktop */}
+    <div className="min-h-screen bg-slate-950 text-slate-200 font-sans flex flex-col items-center justify-center p-4 relative overflow-hidden">
+      {/* Human-crafted ambient background blur gradients */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none opacity-20 hidden lg:block">
-        <div className={cn("absolute -top-[10%] -left-[10%] w-[40%] h-[40%] rounded-full blur-[120px]", theme.bgGlow)}></div>
-        <div className="absolute top-[60%] -right-[5%] w-[30%] h-[30%] bg-indigo-500/20 rounded-full blur-[100px]"></div>
+        <div className={cn("absolute -top-[10%] -left-[10%] w-[50%] h-[50%] rounded-full blur-[130px] transition-all", theme.bgGlow)}></div>
+        <div className="absolute top-[60%] -right-[5%] w-[40%] h-[40%] bg-indigo-500/10 rounded-full blur-[120px]"></div>
       </div>
 
       <motion.div 
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="w-full max-w-xl bg-slate-900 lg:bg-slate-900/50 lg:backdrop-blur-xl rounded-[2.5rem] shadow-2xl overflow-hidden border border-slate-800 z-10"
+        initial={{ opacity: 0, scale: 0.98, y: 15 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+        className="w-full max-w-xl bg-slate-900/40 backdrop-blur-2xl rounded-[2.5rem] shadow-[0_24px_60px_rgba(0,0,0,0.6)] border border-slate-800/80 overflow-hidden z-10"
       >
-        <div className="p-6 sm:p-8 space-y-6">
-          {/* Brand/Hero Section - Elegant Top Banner card exactly matching simulated preview */}
-          <div className={cn("p-6 text-white flex flex-col items-center text-center relative overflow-hidden rounded-[2rem] shadow-lg shrink-0", theme.heroBg)}>
+        <div className="p-5 sm:p-8 space-y-6">
+          {/* Brand/Hero Section - Custom minimalist luxury brand banner */}
+          <div className={cn("p-6 text-white flex flex-col items-center text-center relative overflow-hidden rounded-3xl shrink-0 shadow-md group", theme.heroBg)}>
             <div className={cn("absolute top-0 left-0 w-full h-full skew-x-12 translate-x-1/2", theme.heroSkewBg)}></div>
             
+            {/* Elegant logo wrapper */}
             <div className={cn(
-              "w-16 h-16 rounded-2xl flex items-center justify-center mb-3.5 relative z-10 shadow-xl border overflow-hidden",
-              finalLogoUrl ? "bg-white p-1.5 border-white/40" : "bg-white/10 backdrop-blur-md border-white/20"
+              "w-16 h-16 rounded-[1.25rem] flex items-center justify-center mb-4 relative z-10 shadow-lg border overflow-hidden p-1.5 transition-all duration-500 group-hover:scale-[1.03]",
+              finalLogoUrl ? "bg-white border-white/40" : "bg-white/10 backdrop-blur-md border-white/20"
             )}>
               {finalLogoUrl ? (
-                <img src={finalLogoUrl} alt="الشعار" className="w-full h-full object-contain rounded-xl" referrerPolicy="no-referrer" />
+                <img src={finalLogoUrl} alt="الشعار" className="w-full h-full object-contain rounded-lg" referrerPolicy="no-referrer" />
               ) : (
                 (() => {
-                  switch (finalChosenIcon) {
-                    case "shopping-bag": return <ShoppingBag className="w-7 h-7 text-white" />;
-                    case "utensils": return <Utensils className="w-7 h-7 text-white" />;
-                    case "store": return <Store className="w-7 h-7 text-white" />;
-                    case "coffee": return <Coffee className="w-7 h-7 text-white" />;
-                    case "pizza": return <Pizza className="w-7 h-7 text-white" />;
-                    case "sparkles": return <Sparkles className="w-7 h-7 text-white" />;
-                    case "pill": return <Pill className="w-7 h-7 text-white" />;
-                    case "croissant": return <Croissant className="w-7 h-7 text-white" />;
-                    case "shopping-cart": return <ShoppingCart className="w-7 h-7 text-white" />;
-                    case "shirt": return <Shirt className="w-7 h-7 text-white" />;
-                    case "gift": return <Gift className="w-7 h-7 text-white" />;
-                    case "flower": return <Flower className="w-7 h-7 text-white" />;
-                    case "smartphone": return <Smartphone className="w-7 h-7 text-white" />;
-                    case "apple": return <Apple className="w-7 h-7 text-white" />;
-                    default: return <ShoppingBag className="w-7 h-7 text-white" />;
-                  }
+                  const IconCompName = (() => {
+                    switch (finalChosenIcon) {
+                      case "shopping-bag": return ShoppingBag;
+                      case "utensils": return Utensils;
+                      case "store": return Store;
+                      case "coffee": return Coffee;
+                      case "pizza": return Pizza;
+                      case "sparkles": return Sparkles;
+                      case "pill": return Pill;
+                      case "croissant": return Croissant;
+                      case "shopping-cart": return ShoppingCart;
+                      case "shirt": return Shirt;
+                      case "gift": return Gift;
+                      case "flower": return Flower;
+                      case "smartphone": return Smartphone;
+                      case "apple": return Apple;
+                      default: return ShoppingBag;
+                    }
+                  })();
+                  return <IconCompName className="w-6 h-6 text-white" />;
                 })()
               )}
             </div>
             
-            <h1 className="text-2xl font-black mb-1.5 relative z-10 leading-tight" dir="rtl">
-               {finalRestaurantName} ⚡
+            {/* Online Status Label */}
+            <div className="mb-2.5 z-10 flex items-center gap-1.5 px-3 py-1 bg-black/20 backdrop-blur-md border border-white/10 rounded-full">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span className="text-[9px] font-bold text-white tracking-wide">نظام فوري مفعّل</span>
+            </div>
+
+            <h1 className="text-xl sm:text-2xl font-black relative z-10 leading-tight mb-2 text-white font-sans tracking-tight" dir="rtl">
+               {finalRestaurantName}
             </h1>
-            <p className="text-white/80 text-[11px] font-semibold leading-relaxed relative z-10 max-w-[280px] text-center" dir="rtl">{finalWelcomeMessage}</p>
+            <p className="text-white/90 text-[11px] font-bold leading-normal relative z-10 max-w-[340px] text-center" dir="rtl">{finalWelcomeMessage}</p>
           </div>
 
           {/* Form and info details stack */}
@@ -1950,307 +1961,275 @@ export default function CustomerView({ orgId }: { orgId: string }) {
                   )}
                 </AnimatePresence>
               </motion.div>
-            ) : status === "success" ? (
-              <motion.div 
-                key="success"
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                className="flex flex-col items-center py-10 text-center"
-              >
-                <div className={cn("w-20 h-20 rounded-full flex items-center justify-center mb-4 border", theme.badgeBg)}>
-                  <CheckCircle2 className="w-10 h-10" />
-                </div>
-                <h2 className="text-2xl font-bold text-white mb-2">تم استلام طلبك!</h2>
-                <p className="text-slate-400 mb-6">الموظفون بدأوا بتجهيزه الآن، سننبهك فور الجاهزية</p>
-                <button 
-                  onClick={() => setStatus("idle")}
-                  className="px-8 py-3 bg-slate-800 text-slate-300 rounded-xl hover:bg-slate-700 transition-colors font-bold border border-slate-700"
-                >
-                  إرسال طلب جديد
-                </button>
-              </motion.div>
             ) : (
-              <motion.form 
-                key="form"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
+              <motion.form
+                key="order-form"
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.98 }}
                 onSubmit={handleSubmit}
-                className="space-y-6"
+                className="space-y-6 pt-2 font-sans"
                 dir="rtl"
               >
+                {/* Name Input */}
                 <div className="space-y-2">
                   <label className="text-[10px] uppercase tracking-normal font-bold text-slate-500 flex items-center gap-2">
-                    <User className={cn("w-3 h-3", theme.textAccent)} /> اسم العميل
+                    <User className={cn("w-3 h-3", theme.textAccent)} /> اسمك الثلاثي/الكريم
                   </label>
                   <input
                     required
                     type="text"
+                    placeholder="اكتب اسمك الثلاثي هنا للتعرف الفوري على طلبك..."
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder=""
                     className={cn(
-                      "w-full px-4 py-3 rounded-xl border border-slate-800 focus:ring-2 focus:border-transparent outline-none transition-all bg-slate-950 text-white placeholder-slate-600",
+                      "w-full px-4 py-3 rounded-xl border border-slate-800 focus:ring-2 focus:border-transparent outline-none transition-all bg-slate-950 text-white placeholder-slate-600 text-right font-bold text-xs",
                       theme.focusRing
                     )}
                   />
                 </div>
 
+                {/* Phone Input with Country Selection */}
                 <div className="space-y-2">
                   <label className="text-[10px] uppercase tracking-normal font-bold text-slate-500 flex items-center gap-2">
-                    <Phone className={cn("w-3 h-3", theme.textAccent)} /> رقم الجوال
+                    <Phone className={cn("w-3 h-3", theme.textAccent)} /> رقم الجوال/واتساب (بدون الصفر بالبداية للتواصل الفوري)
                   </label>
-                  
-                  <div className="flex gap-2 relative" dir="ltr">
-                    {/* Country code selector */}
-                    <div className="relative">
-                      <select
-                        value={countryPrefix}
-                        onChange={(e) => {
-                          setCountryPrefix(e.target.value);
-                          if (rawPhone.startsWith("0")) {
-                            setRawPhone(rawPhone.replace(/^0+/, ""));
-                          }
-                        }}
-                        className={cn(
-                          "appearance-none h-full bg-slate-950 text-white border border-slate-800 rounded-xl pl-3 pr-8 py-3 text-xs focus:ring-2 focus:border-transparent outline-none cursor-pointer font-bold font-sans transition-all text-center min-w-[100px]",
-                          theme.focusRing
-                        )}
-                      >
-                        <option value="967">🇾🇪 +967</option>
-                        <option value="966">🇸🇦 +966</option>
-                      </select>
-                      <ChevronDown className="w-3.5 h-3.5 text-slate-500 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                    </div>
-
-                    {/* Numeric phone input */}
+                  <div className="flex gap-2" dir="ltr">
+                    <select
+                      value={countryPrefix}
+                      onChange={(e) => setCountryPrefix(e.target.value)}
+                      className="px-3 py-3 rounded-xl border border-slate-800 bg-slate-950 text-white text-xs font-bold outline-none cursor-pointer"
+                    >
+                      <option value="966">🇸🇦 +966</option>
+                      <option value="967">🇾🇪 +967</option>
+                    </select>
                     <input
                       required
                       type="tel"
+                      pattern="[0-9]*"
+                      inputMode="numeric"
+                      placeholder="7xxxxxxxx أو 5xxxxxxxx"
                       value={rawPhone}
-                      onChange={(e) => {
-                        let val = e.target.value.replace(/\D/g, "");
-                        // Strip leading zeroes automatically on input to ensure compatibility
-                        if (val.startsWith("0")) {
-                          val = val.replace(/^0+/, "");
-                        }
-                        setRawPhone(val);
-                      }}
-                      placeholder={countryPrefix === "966" ? "5xxxxxxxx" : "7xxxxxxxx"}
+                      onChange={(e) => setRawPhone(e.target.value.replace(/\D/g, ""))}
                       className={cn(
-                        "flex-1 px-4 py-3 rounded-xl border border-slate-800 focus:ring-2 focus:border-transparent outline-none transition-all bg-slate-950 text-white placeholder-slate-600 font-mono text-left tracking-widest",
+                        "flex-1 px-4 py-3 rounded-xl border border-slate-800 focus:ring-2 focus:border-transparent outline-none transition-all bg-slate-950 text-white placeholder-slate-600 text-left font-mono font-bold text-xs tracking-wider",
                         theme.focusRing
                       )}
                     />
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-[10px] uppercase tracking-normal font-bold text-slate-500 flex items-center gap-2">
-                    <Truck className={cn("w-3 h-3", theme.textAccent)} /> طريقة استلام الطلب
-                  </label>
-                  <div className="grid grid-cols-2 gap-3">
-                    <button
-                      type="button"
-                      onClick={() => setFulfillmentType("pickup")}
-                      className={cn(
-                        "py-3.5 rounded-2xl border text-xs font-bold transition-all text-center flex flex-col justify-center items-center gap-1.5 active:scale-95",
-                        fulfillmentType === "pickup"
-                          ? theme.tabActive
-                          : "bg-slate-950 border-slate-800 text-slate-400 hover:bg-slate-900"
-                      )}
-                    >
-                      <MapPin className={cn("w-4 h-4", theme.textAccent)} />
-                      <span>الاستلام بنفسي من الفرع</span>
-                    </button>
-                    <button
-                      type="button"
-                      disabled={!deliveryEnabled}
-                      onClick={() => {
-                        if (deliveryEnabled) {
-                          setFulfillmentType("delivery");
-                        }
-                      }}
-                      className={cn(
-                        "py-3.5 rounded-2xl border text-xs font-bold transition-all text-center flex flex-col justify-center items-center gap-1.5 relative overflow-hidden active:scale-95 disabled:scale-100",
-                        !deliveryEnabled ? "opacity-35 cursor-not-allowed bg-slate-950/40 border-slate-900 text-slate-600" : (
-                          fulfillmentType === "delivery"
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-[10px] uppercase tracking-normal font-bold text-slate-500 flex items-center gap-2">
+                      <Truck className={cn("w-3 h-3", theme.textAccent)} /> طريقة استلام الطلب
+                    </label>
+                    <div className="grid grid-cols-2 gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setFulfillmentType("pickup")}
+                        className={cn(
+                          "py-3.5 rounded-2xl border text-xs font-bold transition-all text-center flex flex-col justify-center items-center gap-1.5 active:scale-95",
+                          fulfillmentType === "pickup"
                             ? theme.tabActive
                             : "bg-slate-950 border-slate-800 text-slate-400 hover:bg-slate-900"
-                        )
-                      )}
-                      title={!deliveryEnabled ? "خدمة التوصيل غير متوفرة حالياً" : "طلب توصيل للموقع"}
-                    >
-                      <Truck className={cn("w-4 h-4", theme.textAccent)} />
-                      <span>طلب توصيل للموقع</span>
-                      {!deliveryEnabled && (
-                        <span className="absolute top-1 right-1 text-[8px] font-black bg-red-500/15 border border-red-500/20 px-1.5 py-0.5 rounded-md text-red-500 scale-90">مغلق</span>
-                      )}
-                    </button>
+                        )}
+                      >
+                        <MapPin className={cn("w-4 h-4", theme.textAccent)} />
+                        <span>الاستلام بنفسي من الفرع</span>
+                      </button>
+                      <button
+                        type="button"
+                        disabled={!deliveryEnabled}
+                        onClick={() => {
+                          if (deliveryEnabled) {
+                            setFulfillmentType("delivery");
+                          }
+                        }}
+                        className={cn(
+                          "py-3.5 rounded-2xl border text-xs font-bold transition-all text-center flex flex-col justify-center items-center gap-1.5 relative overflow-hidden active:scale-95 disabled:scale-100",
+                          !deliveryEnabled ? "opacity-35 cursor-not-allowed bg-slate-950/40 border-slate-900 text-slate-600" : (
+                            fulfillmentType === "delivery"
+                              ? theme.tabActive
+                              : "bg-slate-950 border-slate-800 text-slate-400 hover:bg-slate-900"
+                          )
+                        )}
+                        title={!deliveryEnabled ? "خدمة التوصيل غير متوفرة حالياً" : "طلب توصيل للموقع"}
+                      >
+                        <Truck className={cn("w-4 h-4", theme.textAccent)} />
+                        <span>طلب توصيل للموقع</span>
+                        {!deliveryEnabled && (
+                          <span className="absolute top-1 right-1 text-[8px] font-black bg-red-500/15 border border-red-500/20 px-1.5 py-0.5 rounded-md text-red-500 scale-90">مغلق</span>
+                        )}
+                      </button>
+                    </div>
                   </div>
-                </div>
 
-                <AnimatePresence>
-                  {fulfillmentType === "delivery" && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: "auto" }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className="space-y-4 overflow-hidden"
-                    >
-                      <div className="space-y-2">
-                        <label className="text-[10px] uppercase tracking-normal font-bold text-slate-500 flex items-center gap-2">
-                          <MapPin className={cn("w-3 h-3", theme.textAccent)} /> العنوان اليدوي بالكامل (مثال: الحي، الشارع، رقم المنزل)
-                        </label>
-                        <textarea
-                          rows={2}
-                          value={addressManual}
-                          onChange={(e) => setAddressManual(e.target.value)}
-                          placeholder="اكتب عنوانك بالتفصيل هنا لمساعدة المندوب..."
-                          className={cn(
-                            "w-full px-4 py-3 rounded-xl border border-slate-800 focus:ring-2 focus:border-transparent outline-none transition-all bg-slate-950 text-white placeholder-slate-600 text-right font-bold text-xs leading-relaxed",
-                            theme.focusRing
-                          )}
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <label className="text-[10px] uppercase tracking-normal font-bold text-slate-500 flex items-center gap-2 font-black">
-                          📍 تحديد موقعك الجغرافي بالرابط أو الـ GPS
-                        </label>
-                        <div className="flex gap-2">
-                          <input
-                            type="text"
-                            value={addressLocation}
-                            onChange={(e) => setAddressLocation(e.target.value)}
-                            placeholder="ضع رابط خرائط جوجل أو حدد تلقائياً بالزر"
+                  <AnimatePresence>
+                    {fulfillmentType === "delivery" && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="space-y-4 overflow-hidden"
+                      >
+                        <div className="space-y-2">
+                          <label className="text-[10px] uppercase tracking-normal font-bold text-slate-500 flex items-center gap-2">
+                            <MapPin className={cn("w-3 h-3", theme.textAccent)} /> العنوان اليدوي بالكامل (مثال: الحي، الشارع، رقم المنزل)
+                          </label>
+                          <textarea
+                            rows={2}
+                            value={addressManual}
+                            onChange={(e) => setAddressManual(e.target.value)}
+                            placeholder="اكتب عنوانك بالتفصيل هنا لمساعدة المندوب..."
                             className={cn(
-                              "flex-1 px-4 py-3 rounded-xl border border-slate-800 focus:ring-2 focus:border-transparent outline-none transition-all bg-slate-950 text-white placeholder-slate-600 text-right font-bold text-xs font-mono tracking-normal",
+                              "w-full px-4 py-3 rounded-xl border border-slate-800 focus:ring-2 focus:border-transparent outline-none transition-all bg-slate-950 text-white placeholder-slate-600 text-right font-bold text-xs leading-relaxed",
                               theme.focusRing
                             )}
                           />
-                          <button
-                            type="button"
-                            onClick={handleGetLocation}
-                            disabled={isLocating}
-                            className={cn(
-                              "px-3.5 rounded-xl border border-slate-800 text-xs font-bold transition-all flex items-center justify-center gap-1 shrink-0 bg-slate-950 text-slate-400 hover:bg-slate-900 active:scale-95 disabled:opacity-50",
-                              isLocating && "animate-pulse"
-                            )}
-                          >
-                            {isLocating ? (
-                              <Loader2 className="w-4 h-4 animate-spin" />
-                            ) : (
-                              "تحديد موقعي 📍"
-                            )}
-                          </button>
                         </div>
-                        
-                        {locationStatus === "success" && (
-                          <p className="text-[10px] text-emerald-400 font-bold text-right">✓ تم التقاط موقعك الحالي بنجاح ورسم الرابط!</p>
-                        )}
-                        {locationStatus === "error" && (
-                          <p className="text-[10px] text-red-400 font-bold text-right flex items-center gap-1 justify-end">
-                            <XCircle className="w-3 h-3" /> تعذر التقاط الموقع الجغرافي. يرجى لصق الرابط يدوياً لو رغبت.
-                          </p>
-                        )}
-                        {locationStatus === "denied" && (
-                          <p className="text-[10px] text-amber-400 font-bold text-right flex items-center gap-1 justify-end">
-                            <AlertCircle className="w-3 h-3" /> يرجى السماح لمتصفحك بالوصول للـ GPS لتحديد موقعك تلقائياً.
-                          </p>
-                        )}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
 
-                <div className="space-y-2">
-                  <label className="text-[10px] uppercase tracking-normal font-bold text-slate-500 flex items-center gap-2">
-                    <Clock className={cn("w-3 h-3", theme.textAccent)} /> موعد استلام أو توصيل الطلب
-                  </label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setDeliveryOption("today")}
-                      className={cn(
-                        "py-3 rounded-xl border text-xs font-bold transition-all text-center flex flex-col justify-center items-center gap-1",
-                        deliveryOption === "today"
-                          ? theme.tabActive
-                          : "bg-slate-950 border-slate-800 text-slate-400 hover:bg-slate-900"
-                      )}
-                    >
-                      <span>اليوم (فوري)</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setDeliveryOption("custom")}
-                      className={cn(
-                        "py-3 rounded-xl border text-xs font-bold transition-all text-center flex flex-col justify-center items-center gap-1",
-                        deliveryOption === "custom"
-                          ? theme.tabActive
-                          : "bg-slate-950 border-slate-800 text-slate-400 hover:bg-slate-900"
-                      )}
-                    >
-                      <span>تحديد وقت/تاريخ مخصص</span>
-                    </button>
-                  </div>
-
-                  {deliveryOption === "custom" && (
-                    <motion.div 
-                      initial={{ opacity: 0, y: -5 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="mt-2 text-right"
-                    >
-                      <input
-                        required={deliveryOption === "custom"}
-                        type="datetime-local"
-                        value={customDeliveryDate}
-                        onChange={(e) => setCustomDeliveryDate(e.target.value)}
-                        className={cn(
-                          "w-full px-4 py-3 rounded-xl border border-slate-800 focus:ring-2 focus:border-transparent outline-none transition-all bg-slate-950 text-white placeholder-slate-655 text-center font-bold font-mono",
-                          theme.focusRing
-                        )}
-                      />
-                    </motion.div>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-[10px] uppercase tracking-normal font-bold text-slate-500 flex items-center gap-2">
-                    <ShoppingBag className={cn("w-3 h-3", theme.textAccent)} /> تفاصيل الطلبات
-                  </label>
-                  <textarea
-                    required
-                    rows={4}
-                    value={items}
-                    onChange={(e) => setItems(e.target.value)}
-                    placeholder=""
-                    className={cn(
-                      "w-full px-4 py-3 rounded-xl border border-slate-800 focus:ring-2 focus:border-transparent outline-none transition-all bg-slate-950 text-white placeholder-slate-600 resize-none",
-                      theme.focusRing
+                        <div className="space-y-2">
+                          <label className="text-[10px] uppercase tracking-normal font-bold text-slate-500 flex items-center gap-2 font-black">
+                            📍 تحديد موقعك الجغرافي بالرابط أو الـ GPS
+                          </label>
+                          <div className="flex gap-2">
+                            <input
+                              type="text"
+                              value={addressLocation}
+                              onChange={(e) => setAddressLocation(e.target.value)}
+                              placeholder="ضع رابط خرائط جوجل أو حدد تلقائياً بالزر"
+                              className={cn(
+                                "flex-1 px-4 py-3 rounded-xl border border-slate-800 focus:ring-2 focus:border-transparent outline-none transition-all bg-slate-950 text-white placeholder-slate-600 text-right font-bold text-xs font-mono tracking-normal",
+                                theme.focusRing
+                              )}
+                            />
+                            <button
+                              type="button"
+                              onClick={handleGetLocation}
+                              disabled={isLocating}
+                              className={cn(
+                                "px-3.5 rounded-xl border border-slate-800 text-xs font-bold transition-all flex items-center justify-center gap-1 shrink-0 bg-slate-950 text-slate-400 hover:bg-slate-900 active:scale-95 disabled:opacity-50",
+                                isLocating && "animate-pulse"
+                              )}
+                            >
+                              {isLocating ? (
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                              ) : (
+                                "تحديد موقعي 📍"
+                              )}
+                            </button>
+                          </div>
+                          
+                          {locationStatus === "success" && (
+                            <p className="text-[10px] text-emerald-400 font-bold text-right">✓ تم التقاط موقعك الحالي بنجاح ورسم الرابط!</p>
+                          )}
+                          {locationStatus === "error" && (
+                            <p className="text-[10px] text-red-400 font-bold text-right flex items-center gap-1 justify-end">
+                              <XCircle className="w-3 h-3" /> تعذر التقاط الموقع الجغرافي. يرجى لصق الرابط يدوياً لو رغبت.
+                            </p>
+                          )}
+                          {locationStatus === "denied" && (
+                            <p className="text-[10px] text-amber-400 font-bold text-right flex items-center gap-1 justify-end">
+                              <AlertCircle className="w-3 h-3" /> يرجى السماح لمتصفحك بالوصول للـ GPS لتحديد موقعك تلقائياً.
+                            </p>
+                          )}
+                        </div>
+                      </motion.div>
                     )}
-                  />
+                  </AnimatePresence>
                 </div>
 
-                {status === "error" && (
-                  <div className="flex items-start gap-2 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 text-xs leading-relaxed">
-                    <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-                    <span>{errorMessage || "عذراً، حدث خطأ في إرسال الطلب."}</span>
-                  </div>
-                )}
+                <div className="space-y-4 pt-1">
+                  <div className="space-y-2">
+                    <label className="text-[10px] uppercase tracking-normal font-bold text-slate-500 flex items-center gap-2">
+                      <Clock className={cn("w-3 h-3", theme.textAccent)} /> وقت جاهزية الطلب
+                    </label>
+                    <div className="grid grid-cols-2 gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setDeliveryOption("today")}
+                        className={cn(
+                          "py-3 rounded-xl border text-xs font-bold transition-all text-center flex flex-col justify-center items-center gap-1 active:scale-95",
+                          deliveryOption === "today"
+                            ? theme.tabActive
+                            : "bg-slate-950 border-slate-800 text-slate-400 hover:bg-slate-900"
+                        )}
+                      >
+                        <span>تجهيز فوري (الآن)</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setDeliveryOption("custom")}
+                        className={cn(
+                          "py-3 rounded-xl border text-xs font-bold transition-all text-center flex flex-col justify-center items-center gap-1 active:scale-95",
+                          deliveryOption === "custom"
+                            ? theme.tabActive
+                            : "bg-slate-950 border-slate-800 text-slate-400 hover:bg-slate-900"
+                        )}
+                      >
+                        <span>تحديد وقت لاحق</span>
+                      </button>
+                    </div>
 
-                <button
-                  type="submit"
-                  disabled={status === "sending"}
-                  className={cn(
-                    "w-full py-4 rounded-xl text-slate-950 font-black text-lg flex items-center justify-center gap-2 transition-all active:scale-95 shadow-xl",
-                    status === "sending" ? "bg-slate-800 text-slate-500 cursor-not-allowed" : theme.buttonBg
+                    {deliveryOption === "custom" && (
+                      <motion.div 
+                        initial={{ opacity: 0, y: -5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="mt-2 text-right pointer-events-auto"
+                      >
+                        <input
+                          required={deliveryOption === "custom"}
+                          type="datetime-local"
+                          value={customDeliveryDate}
+                          onChange={(e) => setCustomDeliveryDate(e.target.value)}
+                          className={cn(
+                            "w-full px-4 py-3 rounded-xl border border-slate-800 focus:ring-2 focus:border-transparent outline-none transition-all bg-slate-950 text-white text-center font-bold text-xs",
+                            theme.focusRing
+                          )}
+                        />
+                      </motion.div>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[10px] uppercase tracking-normal font-bold text-slate-500 flex items-center gap-2">
+                      <ShoppingBag className={cn("w-3 h-3", theme.textAccent)} /> تفاصيل الطلب والأصناف
+                    </label>
+                    <textarea
+                      required
+                      rows={4}
+                      value={items}
+                      onChange={(e) => setItems(e.target.value)}
+                      placeholder="اكتب أصناف طلبك هنا..."
+                      className={cn(
+                        "w-full px-4 py-3 rounded-xl border border-slate-800 focus:ring-2 focus:border-transparent outline-none transition-all bg-slate-950 text-white placeholder-slate-600 resize-none font-bold text-xs leading-relaxed",
+                        theme.focusRing
+                      )}
+                    />
+                  </div>
+                </div>
+
+                  {status === "error" && (
+                    <div className="flex items-start gap-2.5 p-4 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs leading-relaxed animate-fadeIn" dir="rtl">
+                      <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                      <span>{errorMessage || "عذراً، حدث خطأ في إرسال الطلب."}</span>
+                    </div>
                   )}
-                >
-                  {status === "sending" ? "جاري الإرسال..." : "تأكيد وإرسال الطلب"}
-                  <Send className="w-5 h-5 -rotate-45" />
-                </button>
+
+                  <button
+                    type="submit"
+                    disabled={status === "sending"}
+                    className={cn(
+                      "w-full py-4 rounded-2xl font-black text-sm flex items-center justify-center gap-2 transition-all duration-300 active:scale-95 shadow-xl select-none",
+                      status === "sending" 
+                        ? "bg-slate-850 text-slate-500 cursor-not-allowed border border-slate-800/40" 
+                        : "bg-indigo-600 hover:bg-indigo-550 text-white shadow-[0_10px_25px_-5px_rgba(99,102,241,0.30)] border border-indigo-500/30"
+                    )}
+                  >
+                    {status === "sending" ? "جاري الإرسال والمعالجة..." : "إرسال وتأكيد الطلب الفوري"}
+                    <Send className="w-4 h-4 -rotate-45" />
+                  </button>
               </motion.form>
             )}
             </AnimatePresence>
@@ -2258,20 +2237,15 @@ export default function CustomerView({ orgId }: { orgId: string }) {
         </div>
       </motion.div>
       <div className="mt-8 flex flex-col items-center gap-4 relative z-10">
-        <div className="flex items-center gap-4 text-slate-600 text-[10px] font-mono">
-          <span>SECURITY: SSL ENABLED</span>
-          <div className="w-1 h-1 bg-emerald-500 rounded-full"></div>
-          <span>SERVER: STATUS_OK</span>
-        </div>
         <button 
           onClick={() => {
             const url = new URL(window.location.href);
             url.searchParams.set('view', 'admin');
             window.location.href = url.toString();
           }}
-          className="text-slate-800 hover:text-slate-600 text-[9px] font-bold uppercase tracking-widest transition-colors"
+          className="text-slate-705 hover:text-slate-500 text-[10px] font-black uppercase tracking-wider transition-colors bg-slate-900/40 border border-slate-850 px-4 py-1.5 rounded-full backdrop-blur-md"
         >
-          دخول الإدارة (Owner Login)
+          🔐 دخول إدارة الكادر (Owner Access)
         </button>
       </div>
       <Footer />

@@ -158,40 +158,47 @@ export default function Login({ onSuccess }: LoginProps) {
   const urlOrgId = params.get("orgId");
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4" dir="rtl">
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="max-w-md w-full bg-slate-900 border border-slate-800 rounded-[2.5rem] p-10 shadow-2xl relative overflow-hidden"
-      >
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-purple-500"></div>
+    <div className="min-h-screen bg-slate-950 text-slate-200 font-sans flex items-center justify-center p-4 relative overflow-hidden" dir="rtl">
+      {/* Exquisite custom ambient organic blurred structures for high-end boutique finish */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none opacity-30 select-none">
+        <div className="absolute top-[10%] left-[10%] w-[45%] h-[45%] bg-indigo-600/10 rounded-full blur-[120px]"></div>
+        <div className="absolute bottom-[10%] right-[10%] w-[45%] h-[45%] bg-emerald-600/5 rounded-full blur-[140px]"></div>
+      </div>
 
-        <div className="flex flex-col items-center mb-10 text-center">
-          <div className="w-24 h-24 bg-slate-940 rounded-[2rem] border border-slate-800 flex items-center justify-center mb-6 shadow-2xl overflow-hidden p-0.5 hover:border-emerald-500/20 transition-all duration-300">
-            <img src={logoUrl} alt="Quick Order Logo" className="w-full h-full object-cover rounded-[1.85rem]" referrerPolicy="no-referrer" />
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.98, y: 15 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+        className="max-w-md w-full bg-slate-900/40 backdrop-blur-3xl border border-slate-800/80 rounded-[2.5rem] p-6 sm:p-10 shadow-[0_32px_60px_-15px_rgba(0,0,0,0.7)] relative overflow-hidden z-10"
+      >
+        <div className="absolute top-0 right-0 left-0 h-[1.5px] bg-gradient-to-r from-transparent via-indigo-550/45 to-transparent"></div>
+
+        <div className="flex flex-col items-center mb-8 text-center group">
+          <div className="w-20 h-20 bg-slate-950 rounded-2xl border border-slate-850 flex items-center justify-center mb-6 shadow-[0_12px_32px_rgba(0,0,0,0.5)] overflow-hidden p-1 transition-all duration-300 group-hover:scale-[1.03] group-hover:border-slate-700">
+            <img src={logoUrl} alt="Quick Order Logo" className="w-full h-full object-cover rounded-xl" referrerPolicy="no-referrer" />
           </div>
-          <h1 className="text-3xl font-black text-white tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-black text-slate-100 tracking-tight leading-tight">
             {urlOrgId ? "بوابة إدارة المتجر" : "مركز إدارة المنصة"}
           </h1>
-          <p className="text-slate-500 text-sm mt-2 font-medium">
-            {urlOrgId ? "أهلاً بك مجدداً، سجل دخولك لإدارة متجرك" : "لوحة التحكم السحابية الموحدة للمالك"}
+          <p className="text-slate-450 text-xs sm:text-sm mt-2 font-bold max-w-[280px]">
+            {urlOrgId ? "أهلاً بك مجدداً، يرجى تسجيل بيانات الدخول لمتجرك" : "لوحة التحكم السحابية الموحدة للمالك والإدارة العامة"}
           </p>
         </div>
 
         {error && (
           <motion.div 
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="mb-8 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl flex flex-col gap-3 text-red-500 text-xs font-bold"
+            initial={{ opacity: 0, y: -5 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl flex flex-col gap-2 text-red-400 text-xs font-bold leading-relaxed"
           >
-            <div className="flex items-center gap-3">
-              <AlertCircle className="w-4 h-4 shrink-0" />
+            <div className="flex items-start gap-2.5">
+              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-red-400" />
               <p>{error}</p>
             </div>
             {(error.includes("نافذة") || error.includes("قيود")) && (
               <button 
                 onClick={openInNewTab}
-                className="w-full bg-red-500 text-white py-2 rounded-xl mt-1 hover:bg-red-600 transition-colors"
+                className="w-full bg-red-600 hover:bg-red-550 text-white py-2.5 rounded-xl mt-1 text-center font-black transition-all"
                >
                 فتح في نافذة مستقلة الآن
               </button>
@@ -199,37 +206,37 @@ export default function Login({ onSuccess }: LoginProps) {
           </motion.div>
         )}
 
-        {/* Render Form Inputs for Email & Password or Username & Password */}
+        {/* Form elements */}
         <div className="space-y-6">
           {!urlOrgId && (
-            <>
-              <div className="p-4 bg-indigo-500/5 rounded-2xl border border-indigo-500/10 text-center">
-                <p className="text-xs text-indigo-300 font-bold leading-relaxed">
-                  بإمكانك الدخول فوراً عبر حساب Google المعتمَد، أو استخدام البريد الإلكتروني وكلمة المرور أدناه.
+            <div className="space-y-4">
+              <div className="p-4 bg-indigo-600/5 border border-indigo-500/20 rounded-2xl text-center">
+                <p className="text-[11px] text-indigo-300 font-extrabold leading-relaxed">
+                  يمكنك تسجيل الدخول المباشر المعتمد عبر Google، أو استخدام حساب الإدارة اليدوي المخصص بالأسفل.
                 </p>
               </div>
 
               <button
                 onClick={handleGoogleLogin}
                 disabled={loading}
-                className="w-full bg-white hover:bg-slate-100 text-slate-950 font-black py-4 rounded-2xl transition-all flex items-center justify-center gap-3 border border-slate-200 active:scale-[0.98] shadow-lg shadow-indigo-600/5"
+                className="w-full bg-white hover:bg-slate-50 text-slate-950 font-black py-3.5 px-4 rounded-2xl transition-all duration-300 flex items-center justify-center gap-2.5 active:scale-[0.98] shadow-lg shadow-indigo-950/20"
               >
-                <Chrome className="w-5 h-5 text-indigo-600" />
-                <span>تسجيل الدخول باستخدام Google</span>
+                <Chrome className="w-4 h-4 text-indigo-600 shrink-0" />
+                <span className="text-xs sm:text-[13px]">تسجيل الدخول الفوري بـ Google</span>
               </button>
 
-              <div className="flex items-center my-6">
+              <div className="flex items-center my-4">
                 <div className="flex-1 border-t border-slate-800/80"></div>
-                <span className="px-4 text-xs text-slate-500 font-bold">أو الدخول اليدوي بالبريد</span>
+                <span className="px-3.5 text-[10px] text-slate-500 font-black">أو تسجيل الدخول التقليدي</span>
                 <div className="flex-1 border-t border-slate-800/80"></div>
               </div>
-            </>
+            </div>
           )}
 
-          <form onSubmit={handleStoreLogin} className="space-y-6">
+          <form onSubmit={handleStoreLogin} className="space-y-5">
             <div className="space-y-2">
-              <label className="text-[10px] uppercase font-black tracking-widest text-slate-500 pr-1">
-                {urlOrgId ? "اسم مستخدم المتجر" : "البريد الإلكتروني أو اسم المستخدم"}
+              <label className="text-[11px] font-black text-slate-455 block pr-1">
+                {urlOrgId ? "اسم مستخدم المتجر" : "البريد الإلكتروني أو اسم المستخدم المعتمد"}
               </label>
               <div className="relative group">
                 <User className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-600 group-focus-within:text-indigo-400 transition-colors" />
@@ -238,15 +245,15 @@ export default function Login({ onSuccess }: LoginProps) {
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  placeholder={urlOrgId ? "Ex: bin_saeed" : "Ex: owner@example.com"}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-2xl py-4 pr-12 pl-4 text-white focus:outline-none focus:border-indigo-500 transition-all text-sm font-bold animate-none"
+                  placeholder={urlOrgId ? "مثال: bin_saeed" : "username@example.com"}
+                  className="w-full bg-slate-950/60 border border-slate-850 rounded-2xl py-3.5 pr-11 pl-4 text-white placeholder-slate-650 focus:bg-slate-950 focus:border-indigo-550/50 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all text-xs font-bold"
                   dir="ltr"
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <label className="text-[10px] uppercase font-black tracking-widest text-slate-500 pr-1">كلمة المرور</label>
+              <label className="text-[11px] font-black text-slate-455 block pr-1">كلمة المرور الخاصة بالحساب</label>
               <div className="relative group">
                 <Lock className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-600 group-focus-within:text-indigo-400 transition-colors" />
                 <input
@@ -255,13 +262,13 @@ export default function Login({ onSuccess }: LoginProps) {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-2xl py-4 pr-12 pl-12 text-white focus:outline-none focus:border-indigo-500 transition-all text-sm"
+                  className="w-full bg-slate-950/60 border border-slate-850 rounded-2xl py-3.5 pr-11 pl-11 text-white focus:bg-slate-950 focus:border-indigo-550/50 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all text-xs font-bold"
                   dir="ltr"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors focus:outline-none"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-350 transition-colors focus:outline-none"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -271,12 +278,12 @@ export default function Login({ onSuccess }: LoginProps) {
             <button
               disabled={loading}
               type="submit"
-              className="w-full bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 text-white font-black py-4 rounded-2xl transition-all shadow-lg shadow-indigo-600/20 active:scale-[0.98] group"
+              className="w-full bg-indigo-600 hover:bg-indigo-550 disabled:bg-slate-850 disabled:text-slate-500 text-white font-black py-4 rounded-2xl transition-all duration-300 shadow-[0_8px_24px_-4px_rgba(99,102,241,0.3)] active:scale-[0.98] group text-xs sm:text-sm select-none"
             >
-              {loading ? "جاري التحقق..." : (
-                <span className="flex items-center justify-center gap-2">
-                  دخول لوحة التحكم
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-[-4px] transition-transform" />
+              {loading ? "جاري التحقق والمطابقة..." : (
+                <span className="flex items-center justify-center gap-1.5">
+                  دخول لوحة تحكم المنشأة
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-[-3px] transition-transform" />
                 </span>
               )}
             </button>
