@@ -35,31 +35,51 @@ self.addEventListener("push", (event) => {
   let icon = "/logo.png";
   let data = { url: "/" };
 
-  if (event.data) {
-    try {
-      const payload = event.data.json();
-      title = payload.title || title;
-      body = payload.body || body;
-      tag = payload.tag || tag;
-      icon = payload.icon || icon;
-      if (payload.data) {
-        data = payload.data;
+  try {
+    if (event.data) {
+      const rawText = event.data.text();
+      try {
+        const payload = JSON.parse(rawText);
+        title = payload.title || title;
+        body = payload.body || body;
+        tag = payload.tag || tag;
+        icon = payload.icon || icon;
+        if (payload.data) {
+          data = payload.data;
+        }
+      } catch (jsonErr) {
+        // Fallback to raw text if not JSON
+        body = rawText || body;
       }
-    } catch (e) {
-      // Treat fallback as plain text if failed to parse JSON
-      body = event.data.text() || body;
     }
+  } catch (err) {
+    console.error("Failed to parse event data inside sw:", err);
   }
 
+  // Robustly resolve the icon URL to absolute format so iOS/Android platform handles it in background
+  let resolvedIcon = icon;
+  try {
+    if (resolvedIcon && !resolvedIcon.startsWith("http")) {
+      resolvedIcon = new URL(resolvedIcon, self.location.origin).href;
+    }
+  } catch (urlErr) {
+    resolvedIcon = "/logo.png";
+  }
+
+  const options = {
+    body: body,
+    icon: resolvedIcon,
+    vibrate: [200, 100, 200],
+    tag: tag,
+    requireInteraction: true,
+    data: data
+  };
+
   event.waitUntil(
-    self.registration.showNotification(title, {
-      body: body,
-      icon: icon,
-      vibrate: [200, 100, 200],
-      tag: tag,
-      requireInteraction: true,
-      data: data
-    })
+    self.registration.showNotification(title, options)
+      .catch((err) => {
+        console.error("Critical error rendering background notification:", err);
+      })
   );
 });
 

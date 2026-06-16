@@ -169,7 +169,12 @@ async function startServer() {
         const sData = d.data();
         if (sData.type === "push_subscription" && (sData.userType === "staff" || sData.userType === "admin")) {
           try {
-            await webpush.sendNotification(sData.subscription, payload);
+            await webpush.sendNotification(sData.subscription, payload, {
+              TTL: 86400,
+              headers: {
+                "Urgency": "high"
+              }
+            });
             sentCount++;
           } catch (pushErr: any) {
             console.warn("Failed sending new order push", pushErr.statusCode);
@@ -210,7 +215,12 @@ async function startServer() {
         const sData = d.data();
         if (sData.type === "push_subscription" && sData.userType === "customer" && sData.orderId === orderId) {
           try {
-            await webpush.sendNotification(sData.subscription, payload);
+            await webpush.sendNotification(sData.subscription, payload, {
+              TTL: 86400,
+              headers: {
+                "Urgency": "high"
+              }
+            });
             sentCount++;
           } catch (pushErr: any) {
             console.warn("Failed sending status change push", pushErr.statusCode);
@@ -254,7 +264,12 @@ async function startServer() {
           const sData = d.data();
           if (sData.type === "push_subscription" && (sData.userType === "staff" || sData.userType === "admin")) {
             try {
-              await webpush.sendNotification(sData.subscription, payload);
+              await webpush.sendNotification(sData.subscription, payload, {
+                TTL: 86400,
+                headers: {
+                  "Urgency": "high"
+                }
+              });
               sentCount++;
             } catch (pushErr: any) {
               console.warn("Failed sending chat push to staff", pushErr.statusCode);
@@ -279,7 +294,12 @@ async function startServer() {
           const sData = d.data();
           if (sData.type === "push_subscription" && sData.userType === "customer" && sData.orderId === orderId) {
             try {
-              await webpush.sendNotification(sData.subscription, payload);
+              await webpush.sendNotification(sData.subscription, payload, {
+                TTL: 86400,
+                headers: {
+                  "Urgency": "high"
+                }
+              });
               sentCount++;
             } catch (pushErr: any) {
               console.warn("Failed sending chat push to customer", pushErr.statusCode);
@@ -381,10 +401,9 @@ async function startServer() {
           `<link id="pwa-manifest" rel="manifest" href="${manifestUrl}" />`
         );
 
-        // Fetch custom branding if it's professional tier
+        // Fetch custom branding for all tiers
         let displayName = "الطلب السريع";
         let logoUrl = "/logo.png";
-        let subscriptionTier = "tier1";
 
         if (orgId && db) {
           try {
@@ -393,20 +412,17 @@ async function startServer() {
             if (orgDocSnap.exists()) {
               const oData = orgDocSnap.data();
               if (oData) {
-                subscriptionTier = oData.subscriptionTier || oData.subscriptionPlan || "tier1";
                 displayName = oData.name || "الطلب السريع";
               }
             }
 
-            if (subscriptionTier === "tier3") {
-              const brandingDocRef = doc(db, "organizations", orgId, "settings", "branding");
-              const brandingDocSnap = await getDoc(brandingDocRef);
-              if (brandingDocSnap.exists()) {
-                const bData = brandingDocSnap.data();
-                if (bData) {
-                  displayName = bData.restaurantName || displayName;
-                  logoUrl = bData.logoUrl || "/logo.png";
-                }
+            const brandingDocRef = doc(db, "organizations", orgId, "settings", "branding");
+            const brandingDocSnap = await getDoc(brandingDocRef);
+            if (brandingDocSnap.exists()) {
+              const bData = brandingDocSnap.data();
+              if (bData) {
+                displayName = bData.restaurantName || displayName;
+                logoUrl = bData.logoUrl || "/logo.png";
               }
             }
           } catch (dbErr) {
@@ -490,10 +506,9 @@ async function startServer() {
             `<link id="pwa-manifest" rel="manifest" href="${manifestUrl}" />`
           );
 
-          // Fetch custom branding if it's professional tier
+          // Fetch custom branding for all tiers
           let displayName = "الطلب السريع";
           let logoUrl = "/logo.png";
-          let subscriptionTier = "tier1";
 
           if (orgId && db) {
             try {
@@ -502,20 +517,17 @@ async function startServer() {
               if (orgDocSnap.exists()) {
                 const oData = orgDocSnap.data();
                 if (oData) {
-                  subscriptionTier = oData.subscriptionTier || oData.subscriptionPlan || "tier1";
                   displayName = oData.name || "الطلب السريع";
                 }
               }
 
-              if (subscriptionTier === "tier3") {
-                const brandingDocRef = doc(db, "organizations", orgId, "settings", "branding");
-                const brandingDocSnap = await getDoc(brandingDocRef);
-                if (brandingDocSnap.exists()) {
-                  const bData = brandingDocSnap.data();
-                  if (bData) {
-                    displayName = bData.restaurantName || displayName;
-                    logoUrl = bData.logoUrl || "/logo.png";
-                  }
+              const brandingDocRef = doc(db, "organizations", orgId, "settings", "branding");
+              const brandingDocSnap = await getDoc(brandingDocRef);
+              if (brandingDocSnap.exists()) {
+                const bData = brandingDocSnap.data();
+                if (bData) {
+                  displayName = bData.restaurantName || displayName;
+                  logoUrl = bData.logoUrl || "/logo.png";
                 }
               }
             } catch (dbErr) {
