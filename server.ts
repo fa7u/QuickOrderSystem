@@ -355,59 +355,76 @@ async function startServer() {
           try {
             const orgDocRef = doc(db, "organizations", orgId);
             const orgDocSnap = await getDoc(orgDocRef);
-            let pName = "";
+            let pName = "الطلب السريع";
+            let subscriptionTier = "tier1";
+            
             if (orgDocSnap.exists()) {
               const oData = orgDocSnap.data();
-              if (oData && oData.name) {
-                pName = oData.name;
+              if (oData) {
+                if (oData.name) {
+                  pName = oData.name;
+                }
+                subscriptionTier = oData.subscriptionTier || oData.subscriptionPlan || "tier1";
               }
             }
 
-            const brandingDocRef = doc(db, "organizations", orgId, "settings", "branding");
-            const brandingDocSnap = await getDoc(brandingDocRef);
-            if (brandingDocSnap.exists()) {
-              const bData = brandingDocSnap.data();
-              if (bData) {
-                const displayName = bData.restaurantName || pName;
-                if (displayName) {
-                  let formattedName = displayName;
-                  if (view === "customer") {
-                    formattedName = `${displayName} (عملاء)`;
-                  } else if (view === "staff") {
-                    formattedName = `${displayName} (موظفين)`;
-                  } else if (view === "admin") {
-                    formattedName = `${displayName} (إدارة)`;
-                  }
-                  manifest.name = formattedName;
-                  manifest.short_name = formattedName;
-                }
-                if (bData.logoUrl) {
-                  manifest.icons = [
-                    {
-                      src: bData.logoUrl,
-                      type: "image/png",
-                      sizes: "512x512"
-                    },
-                    {
-                      src: bData.logoUrl,
-                      type: "image/png",
-                      sizes: "192x192",
-                      purpose: "any maskable"
-                    }
-                  ];
+            // If the store is on the Professional tier (tier3), apply their customized name and icon
+            if (subscriptionTier === "tier3") {
+              const brandingDocRef = doc(db, "organizations", orgId, "settings", "branding");
+              const brandingDocSnap = await getDoc(brandingDocRef);
+              let displayName = pName;
+              let logoUrl = "";
+              
+              if (brandingDocSnap.exists()) {
+                const bData = brandingDocSnap.data();
+                if (bData) {
+                  displayName = bData.restaurantName || pName;
+                  logoUrl = bData.logoUrl || "";
                 }
               }
-            } else if (pName) {
-              let formattedName = pName;
+
+              let formattedName = displayName;
               if (view === "customer") {
-                formattedName = `${pName} (عملاء)`;
+                formattedName = `${displayName} (عملاء)`;
               } else if (view === "staff") {
-                formattedName = `${pName} (موظفين)`;
+                formattedName = `${displayName} (موظفين)`;
               } else if (view === "admin") {
-                formattedName = `${pName} (إدارة)`;
+                formattedName = `${displayName} (إدارة)`;
               }
+
               manifest.name = formattedName;
               manifest.short_name = formattedName;
+
+              if (logoUrl) {
+                manifest.icons = [
+                  {
+                    src: logoUrl,
+                    type: "image/png",
+                    sizes: "512x512"
+                  },
+                  {
+                    src: logoUrl,
+                    type: "image/png",
+                    sizes: "192x192",
+                    purpose: "any maskable"
+                  }
+                ];
+              }
+            } else {
+              // Non-professional tier (tier1 / tier2): Fall back to default universal branding "الطلب السريع"
+              let defaultDisplayName = "الطلب السريع";
+              let formattedName = defaultDisplayName;
+              if (view === "customer") {
+                formattedName = `${defaultDisplayName} (عملاء)`;
+              } else if (view === "staff") {
+                formattedName = `${defaultDisplayName} (موظفين)`;
+              } else if (view === "admin") {
+                formattedName = `${defaultDisplayName} (إدارة)`;
+              }
+
+              manifest.name = formattedName;
+              manifest.short_name = formattedName;
+              // Keep default icons (/logo.png)
             }
           } catch (dbErr) {
             console.error("Failed to query branding info for manifest:", dbErr);
