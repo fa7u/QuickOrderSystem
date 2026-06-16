@@ -3,7 +3,6 @@ import Footer from "./Footer";
 import { db } from "../lib/firebase";
 import { subscribeUserToPush } from "../lib/pushSubscription";
 // @ts-ignore
-const logoUrl = "/logo.png";
 import { 
   collection, 
   query, 
@@ -260,6 +259,7 @@ export default function StaffDashboard({ orgId, isPlatformOwner = false }: { org
   const [error, setError] = useState<string | null>(null);
   const [play] = useSound(NOTIFICATION_SOUND);
   const [restaurantName, setRestaurantName] = useState("مطعم البركة");
+  const [logoUrl, setLogoUrl] = useState("/logo.png");
   const [primaryColor, setPrimaryColor] = useState("emerald");
   const [deliveryEnabled, setDeliveryEnabled] = useState(true);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
@@ -486,6 +486,7 @@ export default function StaffDashboard({ orgId, isPlatformOwner = false }: { org
       if (docSnap.exists()) {
         const bData = docSnap.data();
         setRestaurantName(bData.restaurantName || "مطعم البركة");
+        setLogoUrl(bData.logoUrl || "/logo.png");
         setDeliveryEnabled(bData.deliveryEnabled !== false);
         setCurrency(bData.currency || "ريال يمني");
         setEnableSoundLoop(bData.enableSoundLoop !== false);
@@ -709,8 +710,8 @@ export default function StaffDashboard({ orgId, isPlatformOwner = false }: { org
           animate={{ opacity: 1, y: 0 }}
           className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-8"
         >
-          <div className="w-16 h-16 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl flex items-center justify-center text-emerald-500 mb-6 font-mono font-bold text-xs">
-            STAFF
+          <div className="w-16 h-16 bg-slate-950 rounded-2xl flex items-center justify-center text-slate-950 shadow-lg shrink-0 border border-slate-800 overflow-hidden mb-6 p-0.5">
+            <img src={logoUrl} alt="Logo" className="w-full h-full object-cover rounded-xl" referrerPolicy="no-referrer" />
           </div>
           
           <AnimatePresence mode="wait">

@@ -286,8 +286,24 @@ async function startServer() {
 
   // Dynamic manifest.json supporting start_url preservation
   app.get("/manifest.json", async (req, res) => {
-    const orgId = req.query.orgId as string;
-    const view = req.query.view as string;
+    // Set cache headers to strictly forbid caching of the web manifest
+    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0");
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
+
+    let orgId = req.query.orgId as string;
+    let view = req.query.view as string;
+    
+    // Fallback: If query parameters are empty, robustly parse them from the Referer header!
+    if (!orgId && !view && req.headers.referer) {
+      try {
+        const refererUrl = new URL(req.headers.referer as string);
+        orgId = refererUrl.searchParams.get("orgId") || "";
+        view = refererUrl.searchParams.get("view") || "";
+      } catch (err) {
+        console.warn("Failed to parse referer url for manifest.json:", err);
+      }
+    }
     
     // Read the base manifest
     const manifestPath = path.join(process.cwd(), "public", "manifest.json");
@@ -311,15 +327,46 @@ async function startServer() {
           try {
             const orgDocRef = doc(db, "organizations", orgId);
             const orgDocSnap = await getDoc(orgDocRef);
+            let pName = "";
             if (orgDocSnap.exists()) {
               const oData = orgDocSnap.data();
               if (oData && oData.name) {
-                manifest.name = oData.name;
-                manifest.short_name = oData.name;
+                pName = oData.name;
               }
             }
+
+            const brandingDocRef = doc(db, "organizations", orgId, "settings", "branding");
+            const brandingDocSnap = await getDoc(brandingDocRef);
+            if (brandingDocSnap.exists()) {
+              const bData = brandingDocSnap.data();
+              if (bData) {
+                const displayName = bData.restaurantName || pName;
+                if (displayName) {
+                  manifest.name = displayName;
+                  manifest.short_name = displayName;
+                }
+                if (bData.logoUrl) {
+                  manifest.icons = [
+                    {
+                      src: bData.logoUrl,
+                      type: "image/png",
+                      sizes: "512x512"
+                    },
+                    {
+                      src: bData.logoUrl,
+                      type: "image/png",
+                      sizes: "192x192",
+                      purpose: "any maskable"
+                    }
+                  ];
+                }
+              }
+            } else if (pName) {
+              manifest.name = pName;
+              manifest.short_name = pName;
+            }
           } catch (dbErr) {
-            console.error("Failed to query org name for manifest:", dbErr);
+            console.error("Failed to query branding info for manifest:", dbErr);
           }
         }
       } else {
@@ -330,6 +377,24 @@ async function startServer() {
     } catch (e) {
       console.error("Error serving manifest:", e);
       res.status(500).send("Error generating manifest");
+    }
+  });
+
+  // Explicit, no-cache sw.js route to ensure fast updates and reliable background push delivery
+  app.get("/sw.js", (req, res) => {
+    res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
+    
+    const prodPath = path.join(process.cwd(), "dist", "sw.js");
+    const devPath = path.join(process.cwd(), "public", "sw.js");
+    
+    if (process.env.NODE_ENV === "production" && fs.existsSync(prodPath)) {
+      res.sendFile(prodPath);
+    } else if (fs.existsSync(devPath)) {
+      res.sendFile(devPath);
+    } else {
+      res.status(404).send("sw.js not found");
     }
   });
 
