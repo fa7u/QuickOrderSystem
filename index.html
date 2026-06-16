@@ -20,14 +20,24 @@
     <link rel="apple-touch-icon" sizes="167x167" href="/logo.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/logo.png" />
     
-    <!-- Web App Manifest -->
+    <!-- Web App Manifest (Static link for early browser pre-scanners like iOS Safari, with script to append query parameters immediately) -->
+    <link id="pwa-manifest" rel="manifest" href="/manifest.json" />
     <script>
       (function() {
-        var link = document.createElement('link');
-        link.rel = 'manifest';
-        var search = window.location.search;
-        link.href = search ? ('/manifest.json' + search) : '/manifest.json';
-        document.head.appendChild(link);
+        var link = document.getElementById('pwa-manifest');
+        if (link) {
+          var search = window.location.search;
+          if (search) {
+            link.href = '/manifest.json' + search;
+          } else {
+            // Check if we have saved store info in localStorage to ensure continuity even if search is empty
+            var savedOrgId = localStorage.getItem('quickorder_last_org_id');
+            var savedView = localStorage.getItem('quickorder_last_view') || 'customer';
+            if (savedOrgId) {
+              link.href = '/manifest.json?orgId=' + savedOrgId + '&view=' + savedView;
+            }
+          }
+        }
       })();
     </script>
     <meta name="theme-color" content="#020617" />

@@ -67,11 +67,12 @@ self.addEventListener("push", (event) => {
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
   const notificationData = event.notification.data || {};
-  const targetUrl = notificationData.url || "/";
+  const relativeUrl = notificationData.url || "/";
+  const targetUrl = new URL(relativeUrl, self.location.origin).href;
 
   event.waitUntil(
     self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((clientList) => {
-      // Find a client with a matching URL (or any client, and navigate them)
+      // Find a client with a matching URL
       for (const client of clientList) {
         if ("focus" in client) {
           if (client.url && (client.url === targetUrl || client.url.includes(new URL(targetUrl, self.location.origin).pathname))) {
@@ -79,7 +80,7 @@ self.addEventListener("notificationclick", (event) => {
           }
         }
       }
-      // If no matching client, open a new window
+      // If no matching client, open a new window with absolute URL
       if (self.clients.openWindow) {
         return self.clients.openWindow(targetUrl);
       }
