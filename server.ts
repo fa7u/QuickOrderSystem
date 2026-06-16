@@ -5,6 +5,7 @@ import fs from "fs";
 import webpush from "web-push";
 import { initializeApp } from "firebase/app";
 import { getFirestore, doc, getDoc, setDoc, deleteDoc, collection, getDocs, query, where } from "firebase/firestore";
+import { generateManifest } from "./manifest.js";
 
 // Read Firebase Applet Configuration
 import firebaseConfigRaw from "./firebase-applet-config.json";
@@ -299,145 +300,11 @@ async function startServer() {
 
   // Dynamic manifest.json supporting start_url preservation
   app.get("/manifest.json", async (req, res) => {
-    // Set cache headers to strictly forbid caching of the web manifest
-    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0");
-    res.setHeader("Pragma", "no-cache");
-    res.setHeader("Expires", "0");
-
-    let orgId = req.query.orgId as string;
-    let view = req.query.view as string;
-    
-    // Parse cookies manually to ensure maximum reliability of PWA parameter reading
-    const cookies: Record<string, string> = {};
-    if (req.headers.cookie) {
-      req.headers.cookie.split(";").forEach((cookie) => {
-        const parts = cookie.split("=");
-        if (parts.length >= 2) {
-          const name = parts[0].trim();
-          cookies[name] = decodeURIComponent(parts.slice(1).join("=").trim());
-        }
-      });
-    }
-
-    if (!orgId) orgId = cookies["quickorder_last_org_id"];
-    if (!view) view = cookies["quickorder_last_view"];
-
-    // Fallback: If query parameters are empty, robustly parse them from the Referer header!
-    if (!orgId && !view && req.headers.referer) {
-      try {
-        const refererUrl = new URL(req.headers.referer as string);
-        orgId = refererUrl.searchParams.get("orgId") || "";
-        view = refererUrl.searchParams.get("view") || "";
-      } catch (err) {
-        console.warn("Failed to parse referer url for manifest.json:", err);
-      }
-    }
-    
-    // Read the base manifest
-    const manifestPath = path.join(process.cwd(), "public", "manifest.json");
-    if (!fs.existsSync(manifestPath)) {
-      return res.status(404).send("manifest.json not found");
-    }
-    
     try {
-      const manifestStr = fs.readFileSync(manifestPath, "utf-8");
-      const manifest = JSON.parse(manifestStr);
-      
-      // Customize dynamic startup URL based on where they initiated "Add to Home Screen"
-      if (orgId || view) {
-        const queryParams = [];
-        if (orgId) queryParams.push(`orgId=${orgId}`);
-        if (view) queryParams.push(`view=${view}`);
-        manifest.start_url = `/?${queryParams.join("&")}`;
-        
-        // Customize app branding dynamically from Firestore for custom store installations
-        if (orgId && db) {
-          try {
-            const orgDocRef = doc(db, "organizations", orgId);
-            const orgDocSnap = await getDoc(orgDocRef);
-            let pName = "الطلب السريع";
-            let subscriptionTier = "tier1";
-            
-            if (orgDocSnap.exists()) {
-              const oData = orgDocSnap.data();
-              if (oData) {
-                if (oData.name) {
-                  pName = oData.name;
-                }
-                subscriptionTier = oData.subscriptionTier || oData.subscriptionPlan || "tier1";
-              }
-            }
-
-            // If the store is on the Professional tier (tier3), apply their customized name and icon
-            if (subscriptionTier === "tier3") {
-              const brandingDocRef = doc(db, "organizations", orgId, "settings", "branding");
-              const brandingDocSnap = await getDoc(brandingDocRef);
-              let displayName = pName;
-              let logoUrl = "";
-              
-              if (brandingDocSnap.exists()) {
-                const bData = brandingDocSnap.data();
-                if (bData) {
-                  displayName = bData.restaurantName || pName;
-                  logoUrl = bData.logoUrl || "";
-                }
-              }
-
-              let formattedName = displayName;
-              if (view === "customer") {
-                formattedName = `${displayName} (عملاء)`;
-              } else if (view === "staff") {
-                formattedName = `${displayName} (موظفين)`;
-              } else if (view === "admin") {
-                formattedName = `${displayName} (إدارة)`;
-              }
-
-              manifest.name = formattedName;
-              manifest.short_name = formattedName;
-
-              if (logoUrl) {
-                manifest.icons = [
-                  {
-                    src: logoUrl,
-                    type: "image/png",
-                    sizes: "512x512"
-                  },
-                  {
-                    src: logoUrl,
-                    type: "image/png",
-                    sizes: "192x192",
-                    purpose: "any maskable"
-                  }
-                ];
-              }
-            } else {
-              // Non-professional tier (tier1 / tier2): Fall back to default universal branding "الطلب السريع"
-              let defaultDisplayName = "الطلب السريع";
-              let formattedName = defaultDisplayName;
-              if (view === "customer") {
-                formattedName = `${defaultDisplayName} (عملاء)`;
-              } else if (view === "staff") {
-                formattedName = `${defaultDisplayName} (موظفين)`;
-              } else if (view === "admin") {
-                formattedName = `${defaultDisplayName} (إدارة)`;
-              }
-
-              manifest.name = formattedName;
-              manifest.short_name = formattedName;
-              // Keep default icons (/logo.png)
-            }
-          } catch (dbErr) {
-            console.error("Failed to query branding info for manifest:", dbErr);
-          }
-        }
-      } else {
-        manifest.start_url = "/";
-      }
-      
-      res.json(manifest);
-    } catch (e) {
-      console.error("Error serving manifest:", e);
-      res.status(500).send("Error generating manifest");
+      await generateManifest(req, res, db);
+    } catch (err) {
+      console.error("Error running server-side generateManifest:", err);
+      res.status(500).json({ error: "Failed to generate dynamic PWA manifest" });
     }
   });
 

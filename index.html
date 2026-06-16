@@ -21,43 +21,69 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/logo.png" />
     
     <!-- Web App Manifest (Static link for early browser pre-scanners like iOS Safari, with script to append query parameters immediately) -->
-    <link id="pwa-manifest" rel="manifest" href="/manifest.json" />
+    <link id="pwa-manifest" rel="manifest" crossorigin="use-credentials" href="/manifest.json" />
     <script>
       (function() {
-        // Parse params from query parameters
-        var params = new URLSearchParams(window.location.search);
-        var orgId = params.get('orgId');
-        var view = params.get('view') || 'customer';
-        
-        if (orgId) {
-          // Set in cookies instantly so the very first fetch of manifest.json will include it!
-          document.cookie = "quickorder_last_org_id=" + encodeURIComponent(orgId) + "; path=/; max-age=31536000; SameSite=Lax";
-          localStorage.setItem('quickorder_last_org_id', orgId);
-        } else {
-          var savedOrgId = localStorage.getItem('quickorder_last_org_id');
-          if (savedOrgId) {
-            document.cookie = "quickorder_last_org_id=" + encodeURIComponent(savedOrgId) + "; path=/; max-age=31536000; SameSite=Lax";
-          }
-        }
-        
-        if (view) {
-          document.cookie = "quickorder_last_view=" + encodeURIComponent(view) + "; path=/; max-age=31536000; SameSite=Lax";
-          localStorage.setItem('quickorder_last_view', view);
-        } else {
-          var savedView = localStorage.getItem('quickorder_last_view');
-          if (savedView) {
-            document.cookie = "quickorder_last_view=" + encodeURIComponent(savedView) + "; path=/; max-age=31536000; SameSite=Lax";
+        // Universal function to synchronize dynamic PWA manifest and cookies with current storage
+        function updateManifestHref() {
+          var activeOrgId = localStorage.getItem('quickorder_last_org_id') || '';
+          var activeView = localStorage.getItem('quickorder_last_view') || 'customer';
+          
+          if (activeOrgId) {
+            // Guarantee cookies are always kept in perfect sync for server-side manifest rendering
+            var currentOrgCookie = "quickorder_last_org_id=" + encodeURIComponent(activeOrgId) + "; path=/; max-age=31536000; SameSite=Lax";
+            var currentViewCookie = "quickorder_last_view=" + encodeURIComponent(activeView) + "; path=/; max-age=31536000; SameSite=Lax";
+            document.cookie = currentOrgCookie;
+            document.cookie = currentViewCookie;
+
+            var link = document.getElementById('pwa-manifest');
+            if (link) {
+              var targetHref = '/manifest.json?orgId=' + encodeURIComponent(activeOrgId) + '&view=' + encodeURIComponent(activeView);
+              if (link.getAttribute('href') !== targetHref) {
+                link.href = targetHref;
+                console.log('[Dynamic PWA] Manifest link synchronized to:', targetHref);
+              }
+            }
           }
         }
 
-        var link = document.getElementById('pwa-manifest');
-        if (link) {
-          var activeOrgId = orgId || localStorage.getItem('quickorder_last_org_id') || '';
-          var activeView = view || localStorage.getItem('quickorder_last_view') || 'customer';
-          if (activeOrgId) {
-            link.href = '/manifest.json?orgId=' + encodeURIComponent(activeOrgId) + '&view=' + encodeURIComponent(activeView);
-          }
+        // Parse params from query parameters
+        var params = new URLSearchParams(window.location.search);
+        var urlOrgId = params.get('orgId');
+        var urlView = params.get('view');
+        
+        if (urlOrgId) {
+          localStorage.setItem('quickorder_last_org_id', urlOrgId);
         }
+        if (urlView) {
+          localStorage.setItem('quickorder_last_view', urlView);
+        }
+
+        // Initial synchronization
+        updateManifestHref();
+
+        // Intercept local state updates directly (monkeypatch) to respond instantly
+        var originalSetItem = localStorage.setItem;
+        localStorage.setItem = function(key, value) {
+          try {
+            originalSetItem.apply(this, arguments);
+          } catch(e) {
+            // Fallback if needed
+          }
+          if (key === 'quickorder_last_org_id' || key === 'quickorder_last_view') {
+            updateManifestHref();
+          }
+        };
+
+        // Listen for standard storage event (multi-tab change synchronization)
+        window.addEventListener('storage', function(e) {
+          if (e.key === 'quickorder_last_org_id' || e.key === 'quickorder_last_view') {
+            updateManifestHref();
+          }
+        });
+
+        // Fail-safe periodic polling/cleanup loop to ensure perfect sync
+        setInterval(updateManifestHref, 1000);
       })();
     </script>
     <meta name="theme-color" content="#020617" />
