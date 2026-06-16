@@ -28,14 +28,21 @@ export default function App() {
     let v = params.get('view') as any;
     let id = params.get('orgId');
     
-    // Fallback to localStorage if not specified in URL
-    if (!v && !id) {
-      const savedView = localStorage.getItem('quickorder_last_view');
-      const savedOrgId = localStorage.getItem('quickorder_last_org_id');
-      if (savedView) {
-        v = savedView;
-        id = savedOrgId;
+    // Parse cookies helper
+    const cookies: Record<string, string> = {};
+    document.cookie.split(";").forEach((cookie) => {
+      const parts = cookie.split("=");
+      if (parts.length >= 2) {
+        cookies[parts[0].trim()] = decodeURIComponent(parts.slice(1).join("=").trim());
       }
+    });
+
+    // Fallback to cookies / localStorage if not specified in URL
+    if (!id) {
+      id = cookies['quickorder_last_org_id'] || localStorage.getItem('quickorder_last_org_id');
+    }
+    if (!v) {
+      v = cookies['quickorder_last_view'] || localStorage.getItem('quickorder_last_view') || 'customer';
     }
     
     return {
@@ -104,11 +111,14 @@ export default function App() {
   useEffect(() => {
     if (view) {
       localStorage.setItem('quickorder_last_view', view);
+      document.cookie = "quickorder_last_view=" + encodeURIComponent(view) + "; path=/; max-age=31536000; SameSite=Lax";
     }
     if (orgId) {
       localStorage.setItem('quickorder_last_org_id', orgId);
+      document.cookie = "quickorder_last_org_id=" + encodeURIComponent(orgId) + "; path=/; max-age=31536000; SameSite=Lax";
     } else {
       localStorage.removeItem('quickorder_last_org_id');
+      document.cookie = "quickorder_last_org_id=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
     }
 
     const params = new URLSearchParams(window.location.search);

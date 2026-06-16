@@ -24,18 +24,38 @@
     <link id="pwa-manifest" rel="manifest" href="/manifest.json" />
     <script>
       (function() {
+        // Parse params from query parameters
+        var params = new URLSearchParams(window.location.search);
+        var orgId = params.get('orgId');
+        var view = params.get('view') || 'customer';
+        
+        if (orgId) {
+          // Set in cookies instantly so the very first fetch of manifest.json will include it!
+          document.cookie = "quickorder_last_org_id=" + encodeURIComponent(orgId) + "; path=/; max-age=31536000; SameSite=Lax";
+          localStorage.setItem('quickorder_last_org_id', orgId);
+        } else {
+          var savedOrgId = localStorage.getItem('quickorder_last_org_id');
+          if (savedOrgId) {
+            document.cookie = "quickorder_last_org_id=" + encodeURIComponent(savedOrgId) + "; path=/; max-age=31536000; SameSite=Lax";
+          }
+        }
+        
+        if (view) {
+          document.cookie = "quickorder_last_view=" + encodeURIComponent(view) + "; path=/; max-age=31536000; SameSite=Lax";
+          localStorage.setItem('quickorder_last_view', view);
+        } else {
+          var savedView = localStorage.getItem('quickorder_last_view');
+          if (savedView) {
+            document.cookie = "quickorder_last_view=" + encodeURIComponent(savedView) + "; path=/; max-age=31536000; SameSite=Lax";
+          }
+        }
+
         var link = document.getElementById('pwa-manifest');
         if (link) {
-          var search = window.location.search;
-          if (search) {
-            link.href = '/manifest.json' + search;
-          } else {
-            // Check if we have saved store info in localStorage to ensure continuity even if search is empty
-            var savedOrgId = localStorage.getItem('quickorder_last_org_id');
-            var savedView = localStorage.getItem('quickorder_last_view') || 'customer';
-            if (savedOrgId) {
-              link.href = '/manifest.json?orgId=' + savedOrgId + '&view=' + savedView;
-            }
+          var activeOrgId = orgId || localStorage.getItem('quickorder_last_org_id') || '';
+          var activeView = view || localStorage.getItem('quickorder_last_view') || 'customer';
+          if (activeOrgId) {
+            link.href = '/manifest.json?orgId=' + encodeURIComponent(activeOrgId) + '&view=' + encodeURIComponent(activeView);
           }
         }
       })();

@@ -35,6 +35,19 @@ async function startServer() {
 
   app.use(express.json());
 
+  // Middleware to auto-capture orgId and view from incoming query parameters and save them as cookies
+  app.use((req, res, next) => {
+    const orgId = req.query.orgId as string;
+    const view = req.query.view as string;
+    if (orgId) {
+      res.cookie("quickorder_last_org_id", orgId, { maxAge: 31536000 * 1000, httpOnly: false, sameSite: "lax" });
+    }
+    if (view) {
+      res.cookie("quickorder_last_view", view, { maxAge: 31536000 * 1000, httpOnly: false, sameSite: "lax" });
+    }
+    next();
+  });
+
   // Setup VAPID details for Web Push
   let vapidKeys: { publicKey: string; privateKey: string } | null = null;
   if (db) {
@@ -294,6 +307,21 @@ async function startServer() {
     let orgId = req.query.orgId as string;
     let view = req.query.view as string;
     
+    // Parse cookies manually to ensure maximum reliability of PWA parameter reading
+    const cookies: Record<string, string> = {};
+    if (req.headers.cookie) {
+      req.headers.cookie.split(";").forEach((cookie) => {
+        const parts = cookie.split("=");
+        if (parts.length >= 2) {
+          const name = parts[0].trim();
+          cookies[name] = decodeURIComponent(parts.slice(1).join("=").trim());
+        }
+      });
+    }
+
+    if (!orgId) orgId = cookies["quickorder_last_org_id"];
+    if (!view) view = cookies["quickorder_last_view"];
+
     // Fallback: If query parameters are empty, robustly parse them from the Referer header!
     if (!orgId && !view && req.headers.referer) {
       try {
@@ -342,8 +370,16 @@ async function startServer() {
               if (bData) {
                 const displayName = bData.restaurantName || pName;
                 if (displayName) {
-                  manifest.name = displayName;
-                  manifest.short_name = displayName;
+                  let formattedName = displayName;
+                  if (view === "customer") {
+                    formattedName = `${displayName} (عملاء)`;
+                  } else if (view === "staff") {
+                    formattedName = `${displayName} (موظفين)`;
+                  } else if (view === "admin") {
+                    formattedName = `${displayName} (إدارة)`;
+                  }
+                  manifest.name = formattedName;
+                  manifest.short_name = formattedName;
                 }
                 if (bData.logoUrl) {
                   manifest.icons = [
@@ -362,8 +398,16 @@ async function startServer() {
                 }
               }
             } else if (pName) {
-              manifest.name = pName;
-              manifest.short_name = pName;
+              let formattedName = pName;
+              if (view === "customer") {
+                formattedName = `${pName} (عملاء)`;
+              } else if (view === "staff") {
+                formattedName = `${pName} (موظفين)`;
+              } else if (view === "admin") {
+                formattedName = `${pName} (إدارة)`;
+              }
+              manifest.name = formattedName;
+              manifest.short_name = formattedName;
             }
           } catch (dbErr) {
             console.error("Failed to query branding info for manifest:", dbErr);
