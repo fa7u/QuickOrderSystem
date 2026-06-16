@@ -486,6 +486,14 @@ async function startServer() {
       if (!orgId) orgId = cookies["quickorder_last_org_id"];
       if (!view) view = cookies["quickorder_last_view"] || "customer";
 
+      // Dynamically preserve state by setting updated HTTP cookies instantly
+      if (req.query.orgId) {
+        res.cookie("quickorder_last_org_id", req.query.orgId, { maxAge: 31536000000, path: "/", sameSite: "lax" });
+      }
+      if (req.query.view) {
+        res.cookie("quickorder_last_view", req.query.view, { maxAge: 31536000000, path: "/", sameSite: "lax" });
+      }
+
       const indexPath = path.join(process.cwd(), "index.html");
       if (!fs.existsSync(indexPath)) {
         return next();
@@ -506,9 +514,10 @@ async function startServer() {
           `<link id="pwa-manifest" rel="manifest" href="${manifestUrl}" />`
         );
 
-        // Fetch custom logo if professional tier
+        // Fetch custom branding if it's professional tier
+        let displayName = "الطلب السريع";
         let logoUrl = "/logo.png";
-        let isTier3 = false;
+        let subscriptionTier = "tier1";
 
         if (orgId && db) {
           try {
@@ -516,29 +525,47 @@ async function startServer() {
             const orgDocSnap = await getDoc(orgDocRef);
             if (orgDocSnap.exists()) {
               const oData = orgDocSnap.data();
-              const subscriptionTier = oData.subscriptionTier || oData.subscriptionPlan || "tier1";
-              if (subscriptionTier === "tier3") {
-                isTier3 = true;
-                const brandingDocRef = doc(db, "organizations", orgId, "settings", "branding");
-                const brandingDocSnap = await getDoc(brandingDocRef);
-                if (brandingDocSnap.exists()) {
-                  const bData = brandingDocSnap.data();
-                  if (bData && bData.logoUrl) {
-                    logoUrl = bData.logoUrl;
-                  }
+              if (oData) {
+                subscriptionTier = oData.subscriptionTier || oData.subscriptionPlan || "tier1";
+                displayName = oData.name || "الطلب السريع";
+              }
+            }
+
+            if (subscriptionTier === "tier3") {
+              const brandingDocRef = doc(db, "organizations", orgId, "settings", "branding");
+              const brandingDocSnap = await getDoc(brandingDocRef);
+              if (brandingDocSnap.exists()) {
+                const bData = brandingDocSnap.data();
+                if (bData) {
+                  displayName = bData.restaurantName || displayName;
+                  logoUrl = bData.logoUrl || "/logo.png";
                 }
               }
             }
           } catch (dbErr) {
-            console.error("Failed to query branding in server-side index.html serving:", dbErr);
+            console.error("Failed to query branding in server-side HTML generation (dev):", dbErr);
           }
         }
 
-        if (isTier3 && logoUrl && logoUrl !== "/logo.png") {
-          html = html.replace(
-            /<link rel="apple-touch-icon"[^>]*href="[^"]*"[^>]*>/gi,
-            `<link rel="apple-touch-icon" href="${logoUrl}" />`
-          );
+        let formattedName = displayName;
+        if (view === "customer") {
+          formattedName = `${displayName} (عملاء)`;
+        } else if (view === "staff") {
+          formattedName = `${displayName} (موظفين)`;
+        } else if (view === "admin") {
+          formattedName = `${displayName} (إدارة)`;
+        }
+
+        // Dynamically replace PWA installation displays and iOS titles
+        html = html.replace(/<title>[^<]*<\/title>/gi, `<title>${formattedName}</title>`);
+        html = html.replace(/<meta name="apple-mobile-web-app-title" content="[^"]*"\s*\/?>/gi, `<meta name="apple-mobile-web-app-title" content="${formattedName}" />`);
+        html = html.replace(/<meta name="application-name" content="[^"]*"\s*\/?>/gi, `<meta name="application-name" content="${formattedName}" />`);
+
+        // Dynamically replace all icon variants (apple touch, icons, shortcuts) helper
+        if (logoUrl && logoUrl !== "/logo.png") {
+          html = html.replace(/<link rel="apple-touch-icon"[^>]*href="[^"]*"[^>]*>/gi, `<link rel="apple-touch-icon" href="${logoUrl}" />`);
+          html = html.replace(/<link rel="icon"[^>]*href="[^"]*"[^>]*>/gi, `<link rel="icon" type="image/png" href="${logoUrl}" />`);
+          html = html.replace(/<link rel="shortcut icon"[^>]*href="[^"]*"[^>]*>/gi, `<link rel="shortcut icon" type="image/png" href="${logoUrl}" />`);
         }
 
         res.status(200).set({ "Content-Type": "text/html" }).end(html);
@@ -570,6 +597,14 @@ async function startServer() {
         if (!orgId) orgId = cookies["quickorder_last_org_id"];
         if (!view) view = cookies["quickorder_last_view"] || "customer";
 
+        // Dynamically preserve state by setting updated HTTP cookies instantly
+        if (req.query.orgId) {
+          res.cookie("quickorder_last_org_id", req.query.orgId, { maxAge: 31536000000, path: "/", sameSite: "lax" });
+        }
+        if (req.query.view) {
+          res.cookie("quickorder_last_view", req.query.view, { maxAge: 31536000000, path: "/", sameSite: "lax" });
+        }
+
         const indexPath = path.join(distPath, "index.html");
         if (!fs.existsSync(indexPath)) {
           return res.status(404).send("index.html not found");
@@ -588,9 +623,10 @@ async function startServer() {
             `<link id="pwa-manifest" rel="manifest" href="${manifestUrl}" />`
           );
 
-          // Fetch custom logo if professional tier
+          // Fetch custom branding if it's professional tier
+          let displayName = "الطلب السريع";
           let logoUrl = "/logo.png";
-          let isTier3 = false;
+          let subscriptionTier = "tier1";
 
           if (orgId && db) {
             try {
@@ -598,29 +634,47 @@ async function startServer() {
               const orgDocSnap = await getDoc(orgDocRef);
               if (orgDocSnap.exists()) {
                 const oData = orgDocSnap.data();
-                const subscriptionTier = oData.subscriptionTier || oData.subscriptionPlan || "tier1";
-                if (subscriptionTier === "tier3") {
-                  isTier3 = true;
-                  const brandingDocRef = doc(db, "organizations", orgId, "settings", "branding");
-                  const brandingDocSnap = await getDoc(brandingDocRef);
-                  if (brandingDocSnap.exists()) {
-                    const bData = brandingDocSnap.data();
-                    if (bData && bData.logoUrl) {
-                      logoUrl = bData.logoUrl;
-                    }
+                if (oData) {
+                  subscriptionTier = oData.subscriptionTier || oData.subscriptionPlan || "tier1";
+                  displayName = oData.name || "الطلب السريع";
+                }
+              }
+
+              if (subscriptionTier === "tier3") {
+                const brandingDocRef = doc(db, "organizations", orgId, "settings", "branding");
+                const brandingDocSnap = await getDoc(brandingDocRef);
+                if (brandingDocSnap.exists()) {
+                  const bData = brandingDocSnap.data();
+                  if (bData) {
+                    displayName = bData.restaurantName || displayName;
+                    logoUrl = bData.logoUrl || "/logo.png";
                   }
                 }
               }
             } catch (dbErr) {
-              console.error("Failed to query branding in server-side index.html serving:", dbErr);
+              console.error("Failed to query branding in server-side HTML generation (prod):", dbErr);
             }
           }
 
-          if (isTier3 && logoUrl && logoUrl !== "/logo.png") {
-            html = html.replace(
-              /<link rel="apple-touch-icon"[^>]*href="[^"]*"[^>]*>/gi,
-              `<link rel="apple-touch-icon" href="${logoUrl}" />`
-            );
+          let formattedName = displayName;
+          if (view === "customer") {
+            formattedName = `${displayName} (عملاء)`;
+          } else if (view === "staff") {
+            formattedName = `${displayName} (موظفين)`;
+          } else if (view === "admin") {
+            formattedName = `${displayName} (إدارة)`;
+          }
+
+          // Dynamically replace PWA installation displays and iOS titles
+          html = html.replace(/<title>[^<]*<\/title>/gi, `<title>${formattedName}</title>`);
+          html = html.replace(/<meta name="apple-mobile-web-app-title" content="[^"]*"\s*\/?>/gi, `<meta name="apple-mobile-web-app-title" content="${formattedName}" />`);
+          html = html.replace(/<meta name="application-name" content="[^"]*"\s*\/?>/gi, `<meta name="application-name" content="${formattedName}" />`);
+
+          // Dynamically replace all icon variants (apple touch, icons, shortcuts) helper
+          if (logoUrl && logoUrl !== "/logo.png") {
+            html = html.replace(/<link rel="apple-touch-icon"[^>]*href="[^"]*"[^>]*>/gi, `<link rel="apple-touch-icon" href="${logoUrl}" />`);
+            html = html.replace(/<link rel="icon"[^>]*href="[^"]*"[^>]*>/gi, `<link rel="icon" type="image/png" href="${logoUrl}" />`);
+            html = html.replace(/<link rel="shortcut icon"[^>]*href="[^"]*"[^>]*>/gi, `<link rel="shortcut icon" type="image/png" href="${logoUrl}" />`);
           }
 
           res.status(200).set({ "Content-Type": "text/html" }).end(html);
