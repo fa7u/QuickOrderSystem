@@ -395,17 +395,35 @@ export default function StaffDashboard({ orgId, isPlatformOwner = false }: { org
 
       const q = query(
         collection(db, "organizations", orgId, "orders"),
-        orderBy("status", "asc"),
         orderBy("createdAt", "desc"),
         limit(150)
       );
 
       const unsubscribe = onSnapshot(q, 
         (snapshot) => {
-          const newOrders = snapshot.docs.map((doc) => ({
+          const rawOrders = snapshot.docs.map((doc) => ({
             id: doc.id,
             ...doc.data(),
           })) as Order[];
+
+          // In-memory sort by status, then by createdAt desc to avoid composite index requirements in Firestore
+          const statusOrder: Record<string, number> = {
+            "pending": 0,
+            "accepted": 1,
+            "ready": 2,
+            "delivering": 3,
+            "completed": 4,
+            "cancelled": 5
+          };
+          const newOrders = [...rawOrders].sort((a, b) => {
+            const valA = statusOrder[a.status] !== undefined ? statusOrder[a.status] : 99;
+            const valB = statusOrder[b.status] !== undefined ? statusOrder[b.status] : 99;
+            if (valA !== valB) return valA - valB;
+            
+            const timeA = a.createdAt?.seconds || 0;
+            const timeB = b.createdAt?.seconds || 0;
+            return timeB - timeA;
+          });
 
           const currentPendingIds = new Set(newOrders.filter(o => o.status === "pending").map(o => o.id));
           
@@ -825,8 +843,8 @@ export default function StaffDashboard({ orgId, isPlatformOwner = false }: { org
   const theme = COLOR_THEMES[primaryColor] || COLOR_THEMES.emerald;
 
   return (
-    <div className="h-screen bg-slate-950 text-slate-200 font-sans flex flex-col overflow-hidden" dir="rtl">
-      <div className="flex-1 flex flex-col max-w-screen-2xl mx-auto w-full overflow-hidden">
+    <div className="min-h-screen bg-slate-950 text-slate-200 font-sans flex flex-col" dir="rtl">
+      <div className="flex-1 flex flex-col max-w-screen-2xl mx-auto w-full">
         {/* Header */}
         <header className="p-4 md:px-8 bg-slate-900/40 backdrop-blur-md border-b border-slate-800/80 flex flex-col md:flex-row items-center justify-between gap-4 shrink-0 transition-all duration-300" id="staff-header">
           {/* Right Brand Group */}
@@ -942,11 +960,11 @@ export default function StaffDashboard({ orgId, isPlatformOwner = false }: { org
           </div>
         </div>
 
-        <main className="flex-1 overflow-hidden flex flex-col p-4 gap-4">
-          <div className="flex-1 flex flex-col overflow-hidden">
+        <main className="flex-1 flex flex-col p-4 md:p-6 gap-6">
+          <div className="flex-1 flex flex-col">
             
             {/* Main panel: Interactive massive status buttons (full width) */}
-            <section className="w-full flex-1 flex flex-col gap-4 overflow-y-auto pr-1 pb-4 scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent">
+            <section className="w-full flex-1 flex flex-col gap-6 pb-6">
               {showExpiryWarning && (
                 <motion.div 
                   initial={{ opacity: 0, scale: 0.98, y: -10 }}
