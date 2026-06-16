@@ -5,5 +5,6 @@
   "storageBucket": "quickorder-b5367.firebasestorage.app",
   "messagingSenderId": "527507068443",
   "appId": "1:527507068443:web:d2a309ee238020c9ca4abe",
-  "measurementId": "G-6C04SR2VDF"
+  "measurementId": "G-6C04SR2VDF",
+  "firestoreDatabaseId":"default"
 }
