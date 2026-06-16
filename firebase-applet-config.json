@@ -1,10 +1,10 @@
 {
+  "projectId": "quickorder-b5367",
+  "appId": "1:527507068443:web:d2a309ee238020c9ca4abe",
   "apiKey": "AIzaSyAGpBGEN9jyRrUvGvn5s48W-UOoCAuluFA",
   "authDomain": "quickorder-b5367.firebaseapp.com",
-  "projectId": "quickorder-b5367",
+  "firestoreDatabaseId": "",
   "storageBucket": "quickorder-b5367.firebasestorage.app",
   "messagingSenderId": "527507068443",
-  "appId": "1:527507068443:web:d2a309ee238020c9ca4abe",
-  "measurementId": "G-6C04SR2VDF",
-  "firestoreDatabaseId":"default"
+  "measurementId": "G-6C04SR2VDF"
 }
