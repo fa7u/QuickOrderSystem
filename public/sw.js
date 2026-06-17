@@ -1,5 +1,59 @@
 // Service Worker for Fast Order Tracking Push Alerts & Messaging Notifications
 
+// Import Firebase App and Messaging compatibility libraries inside Service Worker
+try {
+  importScripts("https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js");
+  importScripts("https://www.gstatic.com/firebasejs/10.13.0/firebase-messaging-compat.js");
+
+  // Firebase Configuration corresponding to project settings
+  const firebaseConfig = {
+    apiKey: "AIzaSyAGpBGEN9jyRrUvGvn5s48W-UOoCAuluFA",
+    authDomain: "quickorder-b5367.firebaseapp.com",
+    projectId: "quickorder-b5367",
+    storageBucket: "quickorder-b5367.firebasestorage.app",
+    messagingSenderId: "527507068443",
+    appId: "1:527507068443:web:d2a309ee238020c9ca4abe"
+  };
+
+  // Initialize Firebase app inside the Service Worker context
+  if (firebase && firebase.initializeApp) {
+    firebase.initializeApp(firebaseConfig);
+    const messaging = firebase.messaging();
+
+    // Listen to background messages sent via Firebase Cloud Messaging (FCM)
+    messaging.onBackgroundMessage((payload) => {
+      console.log("FCM Background message received:", payload);
+      const title = payload.notification?.title || payload.data?.title || "تنبيه جديد 🔔";
+      const body = payload.notification?.body || payload.data?.body || "لديك تحديث جديد في طلبك.";
+      const tag = payload.notification?.tag || payload.data?.tag || payload.collapseKey || "fcm-update";
+      const icon = payload.notification?.icon || payload.data?.icon || "/logo.png";
+      const clickUrl = payload.data?.url || "/";
+
+      let resolvedIcon = icon;
+      try {
+        if (resolvedIcon && !resolvedIcon.startsWith("http")) {
+          resolvedIcon = new URL(resolvedIcon, self.location.origin).href;
+        }
+      } catch (urlErr) {
+        resolvedIcon = "/logo.png";
+      }
+
+      const options = {
+        body,
+        icon: resolvedIcon,
+        vibrate: [200, 100, 200],
+        tag,
+        requireInteraction: true,
+        data: payload.data || { url: clickUrl }
+      };
+
+      self.registration.showNotification(title, options);
+    });
+  }
+} catch (err) {
+  console.error("Failed to initialize Firebase Cloud Messaging in Service Worker:", err);
+}
+
 self.addEventListener("install", (event) => {
   self.skipWaiting();
 });
