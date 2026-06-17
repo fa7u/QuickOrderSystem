@@ -169,12 +169,7 @@ async function startServer() {
         const sData = d.data();
         if (sData.type === "push_subscription" && (sData.userType === "staff" || sData.userType === "admin")) {
           try {
-            await webpush.sendNotification(sData.subscription, payload, {
-              TTL: 86400,
-              headers: {
-                "Urgency": "high"
-              }
-            });
+            await webpush.sendNotification(sData.subscription, payload);
             sentCount++;
           } catch (pushErr: any) {
             console.warn("Failed sending new order push", pushErr.statusCode);
@@ -215,12 +210,7 @@ async function startServer() {
         const sData = d.data();
         if (sData.type === "push_subscription" && sData.userType === "customer" && sData.orderId === orderId) {
           try {
-            await webpush.sendNotification(sData.subscription, payload, {
-              TTL: 86400,
-              headers: {
-                "Urgency": "high"
-              }
-            });
+            await webpush.sendNotification(sData.subscription, payload);
             sentCount++;
           } catch (pushErr: any) {
             console.warn("Failed sending status change push", pushErr.statusCode);
@@ -264,12 +254,7 @@ async function startServer() {
           const sData = d.data();
           if (sData.type === "push_subscription" && (sData.userType === "staff" || sData.userType === "admin")) {
             try {
-              await webpush.sendNotification(sData.subscription, payload, {
-                TTL: 86400,
-                headers: {
-                  "Urgency": "high"
-                }
-              });
+              await webpush.sendNotification(sData.subscription, payload);
               sentCount++;
             } catch (pushErr: any) {
               console.warn("Failed sending chat push to staff", pushErr.statusCode);
@@ -294,12 +279,7 @@ async function startServer() {
           const sData = d.data();
           if (sData.type === "push_subscription" && sData.userType === "customer" && sData.orderId === orderId) {
             try {
-              await webpush.sendNotification(sData.subscription, payload, {
-                TTL: 86400,
-                headers: {
-                  "Urgency": "high"
-                }
-              });
+              await webpush.sendNotification(sData.subscription, payload);
               sentCount++;
             } catch (pushErr: any) {
               console.warn("Failed sending chat push to customer", pushErr.statusCode);
