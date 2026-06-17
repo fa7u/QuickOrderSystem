@@ -1,4 +1,5 @@
 // Service Worker for Fast Order Tracking Push Alerts & Messaging Notifications
+// Version: 2.1.2 - Forced Update for Collision-Free Multi-Order Setup
 
 self.addEventListener("install", (event) => {
   self.skipWaiting();

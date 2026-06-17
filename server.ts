@@ -49,8 +49,11 @@ async function startServer() {
     next();
   });
 
-  // Setup VAPID details for Web Push
+  // Setup VAPID details for Web Push with a bulletproof self-healing fallback
   let vapidKeys: { publicKey: string; privateKey: string } | null = null;
+  const fallbackVapid = webpush.generateVAPIDKeys();
+  vapidKeys = { publicKey: fallbackVapid.publicKey, privateKey: fallbackVapid.privateKey };
+
   if (db) {
     try {
       const vapidDocRef = doc(db, "organizations", "systemKeys", "settings", "vapid");
@@ -61,30 +64,27 @@ async function startServer() {
           vapidKeys = { publicKey: data.publicKey, privateKey: data.privateKey };
           console.log("Loaded system VAPID keys from Firestore.");
         }
-      }
-      
-      if (!vapidKeys) {
-        // Generate new VAPID keys and save to Firestore system keys doc
-        const generated = webpush.generateVAPIDKeys();
-        vapidKeys = { publicKey: generated.publicKey, privateKey: generated.privateKey };
+      } else {
+        // Store our generated keys in Firestore so we use a single global key set when possible
         await setDoc(vapidDocRef, {
-          publicKey: generated.publicKey,
-          privateKey: generated.privateKey,
+          publicKey: fallbackVapid.publicKey,
+          privateKey: fallbackVapid.privateKey,
           createdAt: new Date().toISOString()
         });
-        console.log("Generated and stored new system VAPID keys in Firestore.");
-      }
-
-      if (vapidKeys) {
-        webpush.setVapidDetails(
-          "mailto:support@quickorder.com",
-          vapidKeys.publicKey,
-          vapidKeys.privateKey
-        );
+        console.log("Stored generated system VAPID keys in Firestore.");
       }
     } catch (err) {
-      console.error("Failed to setup VAPID keys:", err);
+      console.error("Failed to setup/sync VAPID keys with Firestore, using secure in-memory VAPID fallback Keys gracefully:", err);
     }
+  }
+
+  // Ensure webpush details are ALWAYS configured
+  if (vapidKeys) {
+    webpush.setVapidDetails(
+      "mailto:support@quickorder.com",
+      vapidKeys.publicKey,
+      vapidKeys.privateKey
+    );
   }
 
   // API routes
@@ -122,8 +122,9 @@ async function startServer() {
     }
 
     try {
-      // Create a deterministic unique ID based on subscription endpoint string to avoid duplicates
-      const safeId = "sub_" + Buffer.from(subscription.endpoint).toString("hex").slice(-28);
+      // Create a deterministic unique ID based on subscription endpoint and orderId/userType to avoid overwriting subscriptions of other orders or roles
+      const uniqueKey = `${subscription.endpoint}_${orderId || userType}`;
+      const safeId = "sub_" + Buffer.from(uniqueKey).toString("hex").slice(-64);
       const subDocRef = doc(db, "organizations", orgId, "settings", safeId);
       
       const payload: any = {
