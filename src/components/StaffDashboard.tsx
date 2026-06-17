@@ -2292,6 +2292,53 @@ export default function StaffDashboard({ orgId, isPlatformOwner = false }: { org
             </motion.div>
           </div>
         )}
+
+        {orderToCancel && (
+          <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[100] flex items-center justify-center p-4 pb-20" dir="rtl">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="w-full max-w-sm bg-slate-900 border border-slate-800 rounded-[2rem] p-6 text-center shadow-2xl relative overflow-hidden"
+            >
+              <div className="w-12 h-12 bg-red-500/10 border border-red-500/20 text-red-500 rounded-full flex items-center justify-center mx-auto mb-5">
+                <AlertCircle className="w-6 h-6 text-red-500 animate-bounce" />
+              </div>
+
+              <h3 className="text-lg font-black text-white mb-2 leading-tight">
+                {orderToCancel.status === "pending" ? "رفض طلب العميل" : "إلغاء طلب العميل"}
+              </h3>
+              <p className="text-slate-400 text-xs font-semibold mb-1">
+                هل أنت متأكد من رغبتك في {orderToCancel.status === "pending" ? "رفض" : "إلغاء"} طلب العميل <span className="text-white font-bold">"{orderToCancel.customerName}"</span>؟
+              </p>
+              <p className="text-slate-500 text-[10px] font-bold mb-4">كافة السلع: {orderToCancel.items.slice(0, 55)}...</p>
+
+              <div className="bg-red-500/10 border border-red-500/20 text-red-500 rounded-xl p-3 mb-5 text-[11px] font-bold leading-relaxed text-center">
+                ⚠️ تأكيد الإجراء: سيتم وضع علامة "ملغى" على هذا الطلب وإعلامه في واجهة العميل تلقائياً.
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={async () => {
+                    await updateStatus(orderToCancel.id, "cancelled");
+                    setOrderToCancel(null);
+                  }}
+                  className="flex-1 bg-red-600 hover:bg-red-500 text-white font-black py-3 rounded-2xl transition-all shadow-lg shadow-red-600/20 active:scale-95 text-xs cursor-pointer"
+                >
+                  نعم، {orderToCancel.status === "pending" ? "ارفض" : "ألغِ"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setOrderToCancel(null)}
+                  className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-3 rounded-2xl border border-slate-700 transition-all active:scale-95 text-xs cursor-pointer"
+                >
+                  تراجع
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
       </AnimatePresence>
 
       {/* Floating Centered Toast System */}
