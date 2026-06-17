@@ -1909,6 +1909,14 @@ export default function AdminDashboard({ orgId, user }: { orgId: string, user: a
                         orderId={order.id} 
                         itemsText={order.items || ""} 
                         customerName={order.customerName}
+                        onAllItemsTransferred={
+                          order.status === "accepted" 
+                            ? () => {
+                                const nextStatus = (order.fulfillmentType === "delivery" && deliveryEnabled) ? "delivering" : "ready";
+                                handleUpdateOrderStatus(order.id, nextStatus);
+                              }
+                            : undefined
+                        }
                       />
                     </div>
 

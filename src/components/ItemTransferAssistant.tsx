@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Copy, Check, RotateCcw, Sparkles, FileText, CheckCircle2, ListTodo, HelpCircle } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
@@ -6,14 +6,37 @@ interface ItemTransferAssistantProps {
   orderId: string;
   itemsText: string;
   customerName?: string;
+  onAllItemsTransferred?: () => void;
 }
 
-export function ItemTransferAssistant({ orderId, itemsText, customerName }: ItemTransferAssistantProps) {
+export function ItemTransferAssistant({ orderId, itemsText, customerName, onAllItemsTransferred }: ItemTransferAssistantProps) {
   const [activeTab, setActiveTab] = useState<"smart" | "raw">("smart");
   const [items, setItems] = useState<{ id: string; text: string; done: boolean }[]>([]);
-  const [autoCheckOnCopy, setAutoCheckOnCopy] = useState<boolean>(true);
+  const [autoCheckOnCopy, setAutoCheckOnCopy] = useState<boolean>(() => {
+    try {
+      const saved = localStorage.getItem("transfer_auto_check_on_copy");
+      return saved !== null ? saved === "true" : true;
+    } catch {
+      return true;
+    }
+  });
+  const [autoProgressOnCompleted, setAutoProgressOnCompleted] = useState<boolean>(() => {
+    try {
+      const saved = localStorage.getItem("transfer_auto_progress_on_completed");
+      return saved !== null ? saved === "true" : true;
+    } catch {
+      return true;
+    }
+  });
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [showHelp, setShowHelp] = useState<boolean>(false);
+  const [userInteracted, setUserInteracted] = useState<boolean>(false);
+  const lastCompletedRef = useRef<string | null>(null);
+
+  // If orderId changes, reset userInteracted so that loading a different order doesn't auto-trigger
+  useEffect(() => {
+    setUserInteracted(false);
+  }, [orderId]);
 
   // Parse items from the text when component loads or itemsText changes
   useEffect(() => {
@@ -96,6 +119,7 @@ export function ItemTransferAssistant({ orderId, itemsText, customerName }: Item
 
   // Toggle item done status
   const toggleItemDone = (itemId: string, forceStatus?: boolean) => {
+    setUserInteracted(true);
     setItems(prev =>
       prev.map(item => {
         if (item.id === itemId) {
@@ -108,6 +132,7 @@ export function ItemTransferAssistant({ orderId, itemsText, customerName }: Item
 
   // Reset progress
   const handleReset = () => {
+    setUserInteracted(true);
     setItems(prev => prev.map(item => ({ ...item, done: false })));
   };
 
@@ -119,6 +144,20 @@ export function ItemTransferAssistant({ orderId, itemsText, customerName }: Item
   const doneCount = items.filter(item => item.done).length;
   const progressPercent = totalCount > 0 ? Math.round((doneCount / totalCount) * 100) : 0;
   const allCompleted = totalCount > 0 && doneCount === totalCount;
+
+  // Auto-progress trigger
+  useEffect(() => {
+    if (allCompleted && autoProgressOnCompleted && onAllItemsTransferred && userInteracted) {
+      if (lastCompletedRef.current !== orderId) {
+        lastCompletedRef.current = orderId;
+        onAllItemsTransferred();
+      }
+    } else if (!allCompleted) {
+      if (lastCompletedRef.current === orderId) {
+        lastCompletedRef.current = null;
+      }
+    }
+  }, [allCompleted, autoProgressOnCompleted, onAllItemsTransferred, orderId, userInteracted]);
 
   // Render Smart Tab
   return (
@@ -230,23 +269,45 @@ export function ItemTransferAssistant({ orderId, itemsText, customerName }: Item
               </div>
 
               {/* Automation Toggles */}
-              <div className="flex items-center gap-2 self-end">
+              <div className="flex flex-col items-start gap-2 self-end">
+                <div className="flex items-center gap-2">
+                  <label className="flex items-center gap-1.5 cursor-pointer text-slate-400 hover:text-slate-350 select-none text-[10px] font-bold">
+                    <input
+                      type="checkbox"
+                      checked={autoCheckOnCopy}
+                      onChange={(e) => {
+                        setAutoCheckOnCopy(e.target.checked);
+                        try {
+                          localStorage.setItem("transfer_auto_check_on_copy", e.target.checked ? "true" : "false");
+                        } catch (err) {}
+                      }}
+                      className="accent-indigo-500 w-3.5 h-3.5 rounded border-slate-800 bg-slate-950 cursor-pointer"
+                    />
+                    <span>شطب الصنف من القائمة تلقائياً عند نسخه</span>
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setShowHelp(!showHelp)}
+                    className="w-4 h-4 text-slate-500 hover:text-indigo-400 transition-colors flex items-center justify-center cursor-pointer"
+                  >
+                    <HelpCircle className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+
                 <label className="flex items-center gap-1.5 cursor-pointer text-slate-400 hover:text-slate-350 select-none text-[10px] font-bold">
                   <input
                     type="checkbox"
-                    checked={autoCheckOnCopy}
-                    onChange={(e) => setAutoCheckOnCopy(e.target.checked)}
+                    checked={autoProgressOnCompleted}
+                    onChange={(e) => {
+                      setAutoProgressOnCompleted(e.target.checked);
+                      try {
+                        localStorage.setItem("transfer_auto_progress_on_completed", e.target.checked ? "true" : "false");
+                      } catch (err) {}
+                    }}
                     className="accent-indigo-500 w-3.5 h-3.5 rounded border-slate-800 bg-slate-950 cursor-pointer"
                   />
-                  <span>شطب الصنف من القائمة تلقائياً عند نسخه</span>
+                  <span>تغيير حالة الطلب تلقائياً للمرحلة التالية عند اكتمال شطب جميع الأصناف</span>
                 </label>
-                <button
-                  type="button"
-                  onClick={() => setShowHelp(!showHelp)}
-                  className="w-4 h-4 text-slate-500 hover:text-indigo-400 transition-colors flex items-center justify-center cursor-pointer"
-                >
-                  <HelpCircle className="w-3.5 h-3.5" />
-                </button>
               </div>
             </div>
 

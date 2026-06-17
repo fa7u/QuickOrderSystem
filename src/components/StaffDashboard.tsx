@@ -1543,6 +1543,14 @@ export default function StaffDashboard({ orgId, isPlatformOwner = false }: { org
                                 orderId={order.id} 
                                 itemsText={order.items || ""} 
                                 customerName={order.customerName}
+                                onAllItemsTransferred={
+                                  order.status === "accepted" 
+                                    ? () => {
+                                        const nextStatus = (order.fulfillmentType === "delivery" && deliveryEnabled) ? "delivering" : "ready";
+                                        updateStatus(order.id, nextStatus);
+                                      }
+                                    : undefined
+                                }
                               />
 
                               {order.notes && (
