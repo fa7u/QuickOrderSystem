@@ -62,6 +62,7 @@ interface Order {
   totalPrice?: number;
   deliveryPrice?: number;
   pricingNotes?: string;
+  chatMuted?: boolean;
 }
 
 interface Staff {
@@ -276,6 +277,7 @@ export default function StaffDashboard({ orgId, isPlatformOwner = false }: { org
     }
   }, [orgId]);
   const lastPendingIds = useRef<Set<string>>(new Set());
+  const lastChatLengthMap = useRef<Record<string, number>>({});
   const isFirstLoad = useRef(true);
 
   // sound and native browser desktop notification states
@@ -335,6 +337,14 @@ export default function StaffDashboard({ orgId, isPlatformOwner = false }: { org
       setDesktopPermission(perm);
       if (perm === "granted") {
         showToast("تم تفعيل التنبيهات المكتبية بنجاح! 🎉");
+        // Immediately subscribe staff to Web Push system
+        if (orgId && currentStaff) {
+          subscribeUserToPush({
+            orgId,
+            userType: "staff",
+            staffId: currentStaff.id
+          }).catch(err => console.error("Error subscribing staff to push via button click:", err));
+        }
         triggerDesktopNotification("تنبيهات طاقم العمل 🔔", "ستستلم إشعارات نظام فورية بجميع الطلبات الجديدة الواردة!");
       } else {
         setShowNotificationGuide(true);
@@ -349,13 +359,39 @@ export default function StaffDashboard({ orgId, isPlatformOwner = false }: { org
 
   const triggerDesktopNotification = (title: string, body: string) => {
     if ("Notification" in window && Notification.permission === "granted") {
-      try {
-        new Notification(title, {
-          body,
-          requireInteraction: true
+      // Use Service Worker ready registration whenever possible for optimal iOS/Android support
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.ready.then((reg) => {
+          reg.showNotification(title, {
+            body,
+            icon: logoUrl || "/logo.png",
+            requireInteraction: true,
+            data: { url: `/?orgId=${orgId}&view=staff` }
+          }).catch((err) => {
+            console.error("Failed to show SW notification for staff:", err);
+          });
+        }).catch((err) => {
+          console.error("SW ready failed for staff:", err);
+          try {
+            new Notification(title, {
+              body,
+              icon: logoUrl || undefined,
+              requireInteraction: true
+            });
+          } catch (e) {
+            console.error("Fallback new Notification failed:", e);
+          }
         });
-      } catch (err) {
-        console.error("Failed to trigger desktop notification:", err);
+      } else {
+        try {
+          new Notification(title, {
+            body,
+            icon: logoUrl || undefined,
+            requireInteraction: true
+          });
+        } catch (err) {
+          console.error("Failed standard desktop notification:", err);
+        }
       }
     }
   };
@@ -428,6 +464,7 @@ export default function StaffDashboard({ orgId, isPlatformOwner = false }: { org
           const currentPendingIds = new Set(newOrders.filter(o => o.status === "pending").map(o => o.id));
           
           if (!isFirstLoad.current) {
+            // 1. New orders check
             const newPendingIds = Array.from(currentPendingIds).filter(id => !lastPendingIds.current.has(id));
             if (newPendingIds.length > 0) {
               playSoundWithFallback();
@@ -440,7 +477,37 @@ export default function StaffDashboard({ orgId, isPlatformOwner = false }: { org
                 showToast(`وصل طلب جديد من ${newestOrder.customerName || 'عميل'}!`);
               }
             }
+
+            // 2. Chat messages check from customers on any order
+            newOrders.forEach((o) => {
+              const previousLen = lastChatLengthMap.current[o.id] !== undefined ? lastChatLengthMap.current[o.id] : (o.chat ? o.chat.length : 0);
+              const currentChat = o.chat || [];
+              const currentLen = currentChat.length;
+
+              if (currentLen > previousLen) {
+                const newMessages = currentChat.slice(previousLen);
+                const customerMsg = newMessages.find((m: any) => m.sender === "customer");
+                if (customerMsg) {
+                  // Only notify if chat is not muted by staff
+                  if (!o.chatMuted) {
+                    playSoundWithFallback();
+                    triggerDesktopNotification(
+                      `💬 رسالة جديدة من ${o.customerName || "العميل"}`,
+                      customerMsg.text
+                    );
+                    showToast(`رسالة جديدة من ${o.customerName || "العميل"}: ${customerMsg.text}`);
+                  }
+                }
+              }
+            });
           }
+          
+          // Update the chat lengths in our ref map
+          const newChatLengthMap: Record<string, number> = {};
+          newOrders.forEach((o) => {
+            newChatLengthMap[o.id] = o.chat ? o.chat.length : 0;
+          });
+          lastChatLengthMap.current = newChatLengthMap;
           
           setOrders(newOrders);
           lastPendingIds.current = currentPendingIds;

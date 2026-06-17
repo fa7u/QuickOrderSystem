@@ -414,28 +414,46 @@ export default function CustomerView({ orgId }: { orgId: string }) {
       console.warn("Audio play blocked:", err);
     }
 
-    // 2. To avoid double notifications when the user is already inside the active application tab,
-    // we should NOT trigger any notification popups if the document is active and visible.
-    // The user already sees the updates on their screen in real-time.
-    if (typeof document !== "undefined" && document.visibilityState === "visible") {
-      console.log("App is in foreground and focused. Suppressing duplicate notification popups:", title);
-      return;
-    }
-
-    // Otherwise, let the background Service Worker push event handle the notifications
-    // to avoid any duplicate chimes or popups.
+    // 2. Always trigger standard/mobile service worker notification
+    // to guarantee immediate delivery whether app is in background, tab-switched, sleep, or active!
+    fallbackDesktopNotification(title, body);
   };
 
   const fallbackDesktopNotification = (title: string, body: string) => {
     if ("Notification" in window && Notification.permission === "granted") {
-      try {
-        new Notification(title, {
-          body,
-          icon: logoUrl || undefined,
-          requireInteraction: true
+      // Use Service Worker ready registration whenever possible (crucial for iOS Safari / Android support)
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.ready.then((reg) => {
+          reg.showNotification(title, {
+            body,
+            icon: logoUrl || "/logo.png",
+            requireInteraction: true,
+            data: { url: `/?orgId=${orgId}&orderId=${trackingOrderId || ""}` }
+          }).catch((err) => {
+            console.error("Failed to show SW notification for customer:", err);
+          });
+        }).catch((err) => {
+          console.error("SW ready failed for customer:", err);
+          try {
+            new Notification(title, {
+              body,
+              icon: logoUrl || undefined,
+              requireInteraction: true
+            });
+          } catch (e) {
+            console.error("Fallback new Notification failed:", e);
+          }
         });
-      } catch (err) {
-        console.error("Failed standard desktop notification:", err);
+      } else {
+        try {
+          new Notification(title, {
+            body,
+            icon: logoUrl || undefined,
+            requireInteraction: true
+          });
+        } catch (err) {
+          console.error("Failed standard desktop notification:", err);
+        }
       }
     }
   };

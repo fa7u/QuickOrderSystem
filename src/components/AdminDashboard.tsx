@@ -116,6 +116,7 @@ interface Order {
   totalPrice?: number;
   deliveryPrice?: number;
   pricingNotes?: string;
+  chatMuted?: boolean;
 }
 
 type TabType = "live" | "history" | "stats" | "staff" | "links" | "settings" | "customer_settings" | "bank_accounts";
@@ -458,6 +459,7 @@ export default function AdminDashboard({ orgId, user }: { orgId: string, user: a
   // sound and native browser desktop notification states
   const [play] = useSound(NOTIFICATION_SOUND);
   const lastPendingIds = useRef<Set<string>>(new Set());
+  const lastChatLengthMap = useRef<Record<string, number>>({});
   const isFirstLoad = useRef(true);
 
   const [enableSoundLoop, setEnableSoundLoop] = useState<boolean>(true);
@@ -488,6 +490,13 @@ export default function AdminDashboard({ orgId, user }: { orgId: string, user: a
       setDesktopPermission(perm);
       if (perm === "granted") {
         showToast("تم تفعيل التنبيهات المكتبية بنجاح! 🎉");
+        // Immediately subscribe admin to Web Push system
+        if (orgId) {
+          subscribeUserToPush({
+            orgId,
+            userType: "admin"
+          }).catch(err => console.error("Error subscribing admin to push via button click:", err));
+        }
         triggerDesktopNotification("تنبيهات النظام الذكية 🔔", "ستستلم إشعارات فورية عند وصول أي طلب جديد للزبائن!");
       } else {
         setShowNotificationGuide(true);
@@ -502,14 +511,39 @@ export default function AdminDashboard({ orgId, user }: { orgId: string, user: a
 
   const triggerDesktopNotification = (title: string, body: string) => {
     if ("Notification" in window && Notification.permission === "granted") {
-      try {
-        new Notification(title, {
-          body,
-          icon: logoUrl || undefined,
-          requireInteraction: true
+      // Use Service Worker ready registration whenever possible for optimal iOS/Android support
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.ready.then((reg) => {
+          reg.showNotification(title, {
+            body,
+            icon: logoUrl || "/logo.png",
+            requireInteraction: true,
+            data: { url: `/?orgId=${orgId}&view=staff` }
+          }).catch((err) => {
+            console.error("Failed to show SW notification for admin:", err);
+          });
+        }).catch((err) => {
+          console.error("SW ready failed for admin:", err);
+          try {
+            new Notification(title, {
+              body,
+              icon: logoUrl || undefined,
+              requireInteraction: true
+            });
+          } catch (e) {
+            console.error("Fallback new Notification failed:", e);
+          }
         });
-      } catch (err) {
-        console.error("Failed to trigger desktop notification:", err);
+      } else {
+        try {
+          new Notification(title, {
+            body,
+            icon: logoUrl || undefined,
+            requireInteraction: true
+          });
+        } catch (err) {
+          console.error("Failed standard desktop notification:", err);
+        }
       }
     }
   };
@@ -680,6 +714,7 @@ export default function AdminDashboard({ orgId, user }: { orgId: string, user: a
         const currentPendingIds = new Set(fetchedOrders.filter(o => o.status === "pending").map(o => o.id));
         
         if (!isFirstLoad.current) {
+          // 1. Detect new orders
           const newPendingIds = Array.from(currentPendingIds).filter(id => !lastPendingIds.current.has(id));
           if (newPendingIds.length > 0) {
             playSoundWithFallback();
@@ -693,8 +728,38 @@ export default function AdminDashboard({ orgId, user }: { orgId: string, user: a
               showToast(`وصل طلب جديد من ${newestOrder.customerName || 'عميل'}!`);
             }
           }
+
+          // 2. Detect if any active/recent order has new chat messages from customer
+          fetchedOrders.forEach((o) => {
+            const previousLen = lastChatLengthMap.current[o.id] !== undefined ? lastChatLengthMap.current[o.id] : (o.chat ? o.chat.length : 0);
+            const currentChat = o.chat || [];
+            const currentLen = currentChat.length;
+
+            if (currentLen > previousLen) {
+              const newMessages = currentChat.slice(previousLen);
+              const customerMsg = newMessages.find((m: any) => m.sender === "customer");
+              if (customerMsg) {
+                // If the chat isn't explicitly muted by staff/admin
+                if (!o.chatMuted) {
+                  playSoundWithFallback();
+                  triggerDesktopNotification(
+                    `💬 رسالة جديدة من ${o.customerName || "العميل"}`,
+                    customerMsg.text
+                  );
+                  showToast(`رسالة جديدة من ${o.customerName || "العميل"}: ${customerMsg.text}`);
+                }
+              }
+            }
+          });
         }
         
+        // Update the chat lengths in our ref map
+        const newChatLengthMap: Record<string, number> = {};
+        fetchedOrders.forEach((o) => {
+          newChatLengthMap[o.id] = o.chat ? o.chat.length : 0;
+        });
+        lastChatLengthMap.current = newChatLengthMap;
+
         setOrders(fetchedOrders);
         lastPendingIds.current = currentPendingIds;
         isFirstLoad.current = false;
