@@ -78,6 +78,7 @@ import {
 import { cn } from "../lib/utils";
 import { format } from "date-fns";
 import { ar } from "date-fns/locale";
+import { ItemTransferAssistant } from "./ItemTransferAssistant";
 const defaultLogo = "/logo.png";
 
 interface BankAccount {
@@ -1903,8 +1904,12 @@ export default function AdminDashboard({ orgId, user }: { orgId: string, user: a
                       </div>
                     )}
 
-                    <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 mb-6 min-h-[80px]">
-                      <p className="text-sm text-slate-300 leading-relaxed">{order.items}</p>
+                    <div className="mb-6">
+                      <ItemTransferAssistant 
+                        orderId={order.id} 
+                        itemsText={order.items || ""} 
+                        customerName={order.customerName}
+                      />
                     </div>
 
                     {/* Quick Invoice Details (Inform & Proceed) */}

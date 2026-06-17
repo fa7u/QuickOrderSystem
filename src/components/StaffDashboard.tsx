@@ -44,6 +44,7 @@ import useSound from "use-sound";
 import { cn } from "../lib/utils";
 import { format } from "date-fns";
 import { ar } from "date-fns/locale";
+import { ItemTransferAssistant } from "./ItemTransferAssistant";
 
 interface Order {
   id: string;
@@ -1538,9 +1539,11 @@ export default function StaffDashboard({ orgId, isPlatformOwner = false }: { org
                                 </div>
                               )}
 
-                              <div className="bg-slate-900 border border-slate-800 rounded-xl p-3 text-right text-xs font-semibold leading-relaxed mb-3 text-slate-300 select-all whitespace-pre-wrap font-mono">
-                                {order.items}
-                              </div>
+                              <ItemTransferAssistant 
+                                orderId={order.id} 
+                                itemsText={order.items || ""} 
+                                customerName={order.customerName}
+                              />
 
                               {order.notes && (
                                 <div className="text-[10px] text-slate-400 bg-amber-500/5 border border-amber-500/10 p-2.5 rounded-xl mb-3 text-right">
