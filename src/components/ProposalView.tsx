@@ -23,7 +23,9 @@ import {
   Eye,
   Settings,
   Flame,
-  Check
+  Check,
+  Bell,
+  ShoppingCart
 } from 'lucide-react';
 
 interface ProposalViewProps {
@@ -333,6 +335,94 @@ export default function ProposalView({ onBack, onNavigateToView }: ProposalViewP
                 </div>
               </div>
 
+            </div>
+          </div>
+        </section>
+
+        {/* الخصائص والحلول الاستثنائية المطورة حديثاً في المنصة */}
+        <section className="space-y-8 text-right font-sans">
+          <div className="text-center space-y-2">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-xs font-black rounded-full">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>ترقيات استثنائية حصرية</span>
+            </div>
+            <h2 className="text-xl sm:text-3xl font-black text-white bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 via-indigo-400 to-indigo-500">الترقيات والحلول الذكية الحبيسة والمطورة حديثاً</h2>
+            <p className="text-xs sm:text-sm text-slate-400 max-w-2xl mx-auto font-bold leading-relaxed">
+              لقد قمنا بنشر وتفعيل أحدث الابتكارات البرمجية في المنصة لتسريع وتيرة العمل، وضمان خلو تجربة الزبائن والموظفين من أي تفويت أو تشتيت في كافة الأوقات.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* m1 */}
+            <div className="p-6 bg-slate-900/30 border border-slate-800/80 rounded-[2rem] space-y-4 relative overflow-hidden print-card hover:border-indigo-500/35 transition-all">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-500/5 rounded-full blur-2xl pointer-events-none" />
+              <div className="w-11 h-11 rounded-2xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center border border-indigo-500/20">
+                <Bell className="w-5.5 h-5.5 text-indigo-400 animate-pulse" />
+              </div>
+              <h3 className="text-lg font-black text-white">🔔 التنبيهات وإشعارات المتصفح الفورية المباشرة (Instant Web Notifications)</h3>
+              <p className="text-xs text-slate-400 leading-relaxed font-bold">
+                تنبيه دائم وقضاء تام على تفويت العمليات بمجرد وجود لوحة التحكم مفتوحة! تدعم المنصة تكنولوجيا إشعارات المتصفح المباشرة؛ حيث يتلقى المدير وطاقم العمل والزبائن تنبيهات فورية ومؤثرات صوتية صاخبة بمجرد ورود أي إجراء جديد للزبائن أو تحديث للحالة، مما يضمن استمرارية متابعة الأعمال بأقصى سرعة ممكنة دون الحاجة لتحديث اللوحة يدوياً.
+              </p>
+            </div>
+
+            {/* m2 */}
+            <div className="p-6 bg-slate-900/30 border border-slate-800/80 rounded-[2rem] space-y-4 relative overflow-hidden print-card hover:border-emerald-500/35 transition-all">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-full blur-2xl pointer-events-none" />
+              <div className="w-11 h-11 rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center border border-emerald-500/20">
+                <ShoppingCart className="w-5.5 h-5.5 text-emerald-400" />
+              </div>
+              <h3 className="text-lg font-black text-white">🛵 خيارات الاستلام المرنة والتوصيل الذكي لكافة الأنشطة</h3>
+              <p className="text-xs text-slate-400 leading-relaxed font-bold">
+                مرونة تامة تتلاقى مع رغبات العميل! يُمكّن النظام صاحب المشروع من تفعيل أو إيقاف قنوات الطلب المختلفة؛ كأن يختار المشتري "توصيل للموقع" ليوفر إحداثيات وهاتف التوصيل، أو تحديد "الاستلام الشخصي من الفرع" لتجهيز الوجبات أو السلع مسبقاً والحد من طوابير الانتظار، مما يخدم المطاعم والمقاهي ومعارض التجزئة بكافة أنواعها.
+              </p>
+            </div>
+
+            {/* m3 */}
+            <div className="p-6 bg-slate-900/30 border border-slate-800/80 rounded-[2rem] space-y-4 relative overflow-hidden print-card hover:border-amber-500/35 transition-all">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 rounded-full blur-2xl pointer-events-none" />
+              <div className="w-11 h-11 rounded-2xl bg-amber-500/10 text-amber-400 flex items-center justify-center border border-amber-500/20">
+                <Sliders className="w-5.5 h-5.5 text-amber-400" />
+              </div>
+              <h3 className="text-lg font-black text-white">⚙️ مساعد تحضير وتسليم العناصر الذكي (Item Assistant)</h3>
+              <p className="text-xs text-slate-400 leading-relaxed font-bold">
+                نظام منسق لتتبع جهوزية أصناف الطلبية وحمايتها من الأخطاء والازدواجية! تم ابتكار شاشة المساعد التفاعلي بقسم الفرز والتجهيز لتفويض العناصر وإكمال تدقيقها من مناديب التوصيل أو طاقم العمل، مع قفل آمن يمنع التلاعب أو حذف أي أجزاء من الفاتورة عند تخطي الطلب مرحلة التحضير المعتمدة.
+              </p>
+            </div>
+
+            {/* m4 */}
+            <div className="p-6 bg-slate-900/30 border border-slate-800/80 rounded-[2rem] space-y-4 relative overflow-hidden print-card hover:border-pink-500/35 transition-all">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-pink-500/5 rounded-full blur-2xl pointer-events-none" />
+              <div className="w-11 h-11 rounded-2xl bg-pink-500/10 text-pink-400 flex items-center justify-center border border-pink-500/20">
+                <MessageSquare className="w-5.5 h-5.5 text-pink-400" />
+              </div>
+              <h3 className="text-lg font-black text-white">💬 المحادثة اللحظية المدمجة بصفحة التتبع (Live Chat)</h3>
+              <p className="text-xs text-slate-400 leading-relaxed font-bold">
+                اربط طاقم الخدمة بالزبون بأسلوب تقني متميز ومتكامل. بفضل البث بالزمن الفعلي على منصتنا، يستطيع المشتري إرسال استفسارات فورية، ومشاركة إحداثيات التوصيل، أو تأكيد صحة الحوالة المالية وإرفاق معلومات الدفع في نفس واجهة التتبع بلا حاجة لمغادرتها.
+              </p>
+            </div>
+
+            {/* m5 */}
+            <div className="p-6 bg-slate-900/30 border border-slate-800/80 rounded-[2rem] space-y-4 relative overflow-hidden print-card hover:border-violet-500/35 transition-all">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-violet-500/5 rounded-full blur-2xl pointer-events-none" />
+              <div className="w-11 h-11 rounded-2xl bg-indigo-500/10 text-violet-400 flex items-center justify-center border border-indigo-500/20">
+                <Zap className="w-5.5 h-5.5 text-violet-400 animate-bounce" />
+              </div>
+              <h3 className="text-lg font-black text-white">⚡ صفارات الرنين الصوتي المتكرر لتفادي الكسل</h3>
+              <p className="text-xs text-slate-400 leading-relaxed font-bold">
+                نعلم أن نجاح المشروع مقرون بسرعة التلبية؛ لذلك جهّزنا لوحات التحكم بفريق الموظفين بصفارة رنين مسموعة متكررة وعالية النبض تقرع الأجراس بالمتصفح بمجرد وصول الطلب، ولا تهدأ الصفارة حتى يقوم الموظف بمباشرة الفحص وقبول تجهيز المعاملة فعلياً.
+              </p>
+            </div>
+
+            {/* m6 */}
+            <div className="p-6 bg-slate-900/30 border border-slate-800/80 rounded-[2rem] space-y-4 relative overflow-hidden print-card hover:border-teal-500/35 transition-all">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-teal-500/5 rounded-full blur-2xl pointer-events-none" />
+              <div className="w-11 h-11 rounded-2xl bg-teal-500/10 text-teal-450 flex items-center justify-center border border-teal-500/20">
+                <Store className="w-5.5 h-5.5 text-teal-400" />
+              </div>
+              <h3 className="text-lg font-black text-white">🎨 السيطرة التامة على سمات وألوان وهوية المنشأة</h3>
+              <p className="text-xs text-slate-400 leading-relaxed font-bold">
+                اجعل علامتك التجارية تثبت حضورها بقوة في السوق! في لوحة التحكم الإدارية للمشروع، ستتمتع بالسيطرة المطلقة لاختيار ثيم الألوان، والشعارات الترحيبية، والواجهات بمرونة تامة تتناغم مع هوية المقهى أو السوبرماركت أو المعرض الخاص بك.
+              </p>
             </div>
           </div>
         </section>
