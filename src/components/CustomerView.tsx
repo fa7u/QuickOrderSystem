@@ -900,12 +900,24 @@ export default function CustomerView({ orgId }: { orgId: string }) {
       });
 
       // Subscribe customer to push notifications for background alerts
-      if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
-        subscribeUserToPush({
-          orgId,
-          userType: "customer",
-          orderId: docRef.id
-        }).catch(err => console.error("Immediate push subscribe failed:", err));
+      if (typeof window !== "undefined" && "Notification" in window) {
+        let perm = Notification.permission;
+        if (perm === "default") {
+          try {
+            perm = await Notification.requestPermission();
+            setNotificationPermission(perm);
+          } catch (pErr) {
+            console.error("Error auto-requesting permission on submit:", pErr);
+          }
+        }
+        
+        if (perm === "granted") {
+          subscribeUserToPush({
+            orgId,
+            userType: "customer",
+            orderId: docRef.id
+          }).catch(err => console.error("Immediate push subscribe failed:", err));
+        }
       }
 
       // Notify staff/admin of new order

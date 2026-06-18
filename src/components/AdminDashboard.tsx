@@ -1683,6 +1683,37 @@ export default function AdminDashboard({ orgId, user }: { orgId: string, user: a
             </motion.div>
           )}
 
+          {desktopPermission !== "granted" && (
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.98, y: -10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              className="mb-8 p-5 rounded-[2rem] border border-amber-500/25 bg-gradient-to-br from-amber-500/10 via-slate-900/40 to-slate-950 text-right flex flex-col md:flex-row items-start md:items-center justify-between gap-5 shadow-xl relative overflow-hidden"
+              dir="rtl"
+            >
+              <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full blur-2xl pointer-events-none" />
+              <div className="flex items-start gap-4">
+                <div className="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 bg-amber-500/15 text-amber-400 border border-amber-500/30 animate-pulse">
+                  <Bell className="w-5.5 h-5.5" />
+                </div>
+                <div className="space-y-1">
+                  <h4 className="text-sm font-black text-amber-400">🚨 تنبيه هام: إشعارات المتصفح غير مفعّلة في الخلفية!</h4>
+                  <p className="text-slate-300 text-xs font-bold leading-relaxed">
+                    لن تتمكن من استلام الطلبات الجديدة أو تحديثات الزبائن الفورية في الخلفية في حال إغلاق التطبيق أو مغادرة الصفحة. يرجى تنشيط الإشعار فوراً.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 shrink-0 self-end md:self-center">
+                <button
+                  type="button"
+                  onClick={requestNotificationPermission}
+                  className="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 border border-transparent text-xs font-black text-slate-950 transition-all duration-155 cursor-pointer active:scale-95 shadow-lg shadow-amber-500/25"
+                >
+                  🔔 تفعيل الإشعارات الآن
+                </button>
+              </div>
+            </motion.div>
+          )}
+
           {showExpiryWarning && (
             <motion.div 
               initial={{ opacity: 0, scale: 0.98, y: -10 }}
@@ -1909,6 +1940,7 @@ export default function AdminDashboard({ orgId, user }: { orgId: string, user: a
                         orderId={order.id} 
                         itemsText={order.items || ""} 
                         customerName={order.customerName}
+                        orderStatus={order.status}
                         onAllItemsTransferred={
                           order.status === "accepted" 
                             ? () => {

@@ -7,9 +7,10 @@ interface ItemTransferAssistantProps {
   itemsText: string;
   customerName?: string;
   onAllItemsTransferred?: () => void;
+  orderStatus?: string;
 }
 
-export function ItemTransferAssistant({ orderId, itemsText, customerName, onAllItemsTransferred }: ItemTransferAssistantProps) {
+export function ItemTransferAssistant({ orderId, itemsText, customerName, onAllItemsTransferred, orderStatus }: ItemTransferAssistantProps) {
   const [activeTab, setActiveTab] = useState<"smart" | "raw">("smart");
   const [items, setItems] = useState<{ id: string; text: string; done: boolean }[]>([]);
   const [autoCheckOnCopy, setAutoCheckOnCopy] = useState<boolean>(() => {
@@ -38,12 +39,15 @@ export function ItemTransferAssistant({ orderId, itemsText, customerName, onAllI
     setUserInteracted(false);
   }, [orderId]);
 
-  // Parse items from the text when component loads or itemsText changes
+  // Parse items from the text when component loads or itemsText changes or status changes
   useEffect(() => {
     if (!itemsText) {
       setItems([]);
       return;
     }
+
+    // Check if the order is past the preparation phase
+    const isPastPrepValue = !!(orderStatus && orderStatus !== "pending" && orderStatus !== "accepted" && orderStatus !== "cancelled");
 
     // Attempt to load previous transfer progress from localStorage
     const savedProgressKey = `transfer_progress_${orderId}`;
@@ -76,8 +80,8 @@ export function ItemTransferAssistant({ orderId, itemsText, customerName, onAllI
 
       if (cleaned) {
         const itemId = `${orderId}_item_${counter++}`;
-        // If this item's text was previously marked done, restore it
-        const isDone = savedDoneTexts.includes(cleaned);
+        // If order runs past accepted stage, force all items to be marked done/checked!
+        const isDone = isPastPrepValue ? true : savedDoneTexts.includes(cleaned);
         parsedItems.push({
           id: itemId,
           text: cleaned,
@@ -87,7 +91,7 @@ export function ItemTransferAssistant({ orderId, itemsText, customerName, onAllI
     }
 
     setItems(parsedItems);
-  }, [itemsText, orderId]);
+  }, [itemsText, orderId, orderStatus]);
 
   // Save progress to localStorage whenever items state changes
   useEffect(() => {
@@ -100,6 +104,8 @@ export function ItemTransferAssistant({ orderId, itemsText, customerName, onAllI
     }
   }, [items, orderId]);
 
+  const isPastPrep = !!(orderStatus && orderStatus !== "pending" && orderStatus !== "accepted" && orderStatus !== "cancelled");
+
   // Copy helper
   const handleCopyText = async (text: string, itemId?: string) => {
     try {
@@ -108,7 +114,7 @@ export function ItemTransferAssistant({ orderId, itemsText, customerName, onAllI
         setCopiedId(itemId);
         setTimeout(() => setCopiedId(null), 1500);
 
-        if (autoCheckOnCopy) {
+        if (autoCheckOnCopy && !isPastPrep) {
           toggleItemDone(itemId, true);
         }
       }
@@ -119,6 +125,7 @@ export function ItemTransferAssistant({ orderId, itemsText, customerName, onAllI
 
   // Toggle item done status
   const toggleItemDone = (itemId: string, forceStatus?: boolean) => {
+    if (isPastPrep) return; // Block any changes if past prep stage
     setUserInteracted(true);
     setItems(prev =>
       prev.map(item => {
@@ -132,6 +139,7 @@ export function ItemTransferAssistant({ orderId, itemsText, customerName, onAllI
 
   // Reset progress
   const handleReset = () => {
+    if (isPastPrep) return; // Block any changes if past prep stage
     setUserInteracted(true);
     setItems(prev => prev.map(item => ({ ...item, done: false })));
   };
@@ -170,7 +178,7 @@ export function ItemTransferAssistant({ orderId, itemsText, customerName, onAllI
           </div>
           <div>
             <h4 className="text-xs font-black text-white">مفوّض معالجة ونقل السلع الفوري</h4>
-            <p className="text-[10px] text-slate-400 font-bold">بوابة تسريع نقل الطلبات إلى نظام الكاشير والمبيعات</p>
+            <p className="text-[10px] text-slate-400 font-bold">بوابة تسريع نقل الطلبات إلى نظام المبيعات</p>
           </div>
         </div>
 
@@ -210,8 +218,14 @@ export function ItemTransferAssistant({ orderId, itemsText, customerName, onAllI
             exit={{ opacity: 0, y: -5 }}
             className="p-4"
           >
-            {/* Quick Advance Bar */}
-            {nextItem ? (
+            {/* Show success and locked status if past prep, otherwise show Next Item / Completion banner */}
+            {isPastPrep ? (
+              <div className="mb-4 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-3 text-center flex flex-col items-center justify-center gap-1.5">
+                <CheckCircle2 className="w-7 h-7 text-emerald-500" />
+                <h5 className="text-xs font-black text-emerald-400">حالة الطلب مكتملة التجهيز ومحفوظة بنجاح 🎉</h5>
+                <p className="text-[10px] text-slate-400 font-bold">تم تثبيت شطب ونقل كافة الأصناف بشكل نهائي مع ترحيل البيانات للنظام.</p>
+              </div>
+            ) : nextItem ? (
               <div className="mb-4 bg-indigo-600/10 border border-indigo-500/20 rounded-2xl p-3 flex flex-col md:flex-row justify-between items-center gap-3 shadow-sm">
                 <div className="text-right">
                   <span className="text-[9px] uppercase font-bold text-indigo-400 block mb-0.5">الصنف التالي المتبقي للنقل:</span>
@@ -232,7 +246,7 @@ export function ItemTransferAssistant({ orderId, itemsText, customerName, onAllI
               <div className="mb-4 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-3 text-center flex flex-col items-center justify-center gap-1.5">
                 <CheckCircle2 className="w-8 h-8 text-emerald-500 animate-bounce" />
                 <h5 className="text-xs font-black text-emerald-400">رائع! تم نسخ ونقل جميع السلع بنجاح 🎉</h5>
-                <p className="text-[10px] text-slate-400 font-bold">تم إدخال كافة محتويات الطلب إلى نظام مبيعات السوبرماركت.</p>
+                <p className="text-[10px] text-slate-400 font-bold">تم إدخال كافة محتويات الطلب إلى نظام المبيعات.</p>
               </div>
             ) : null}
 
@@ -255,7 +269,7 @@ export function ItemTransferAssistant({ orderId, itemsText, customerName, onAllI
                   />
                 </div>
 
-                {doneCount > 0 && (
+                {doneCount > 0 && !isPastPrep && (
                   <button
                     type="button"
                     onClick={handleReset}
@@ -345,11 +359,12 @@ export function ItemTransferAssistant({ orderId, itemsText, customerName, onAllI
                       <button
                         type="button"
                         onClick={() => toggleItemDone(item.id)}
-                        className={`w-5 h-5 rounded-lg border flex items-center justify-center shrink-0 transition-all cursor-pointer ${
+                        disabled={isPastPrep}
+                        className={`w-5 h-5 rounded-lg border flex items-center justify-center shrink-0 transition-all ${
                           item.done
                             ? "bg-indigo-600 border-indigo-500 text-white"
                             : "border-slate-700 hover:border-indigo-400 bg-slate-900"
-                        }`}
+                        } ${isPastPrep ? "cursor-not-allowed opacity-60" : "cursor-pointer"}`}
                       >
                         {item.done && <Check className="w-3.5 h-3.5 stroke-[3]" />}
                       </button>
