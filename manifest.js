@@ -92,11 +92,15 @@ export async function generateManifest(req, res, db) {
       const orgDocRef = doc(db, "organizations", orgId);
       const orgDocSnap = await getDoc(orgDocRef);
       let displayName = "";
+      let subscriptionTier = "tier1";
 
       if (orgDocSnap.exists()) {
         const oData = orgDocSnap.data();
-        if (oData && oData.name) {
-          displayName = oData.name;
+        if (oData) {
+          if (oData.name) {
+            displayName = oData.name;
+          }
+          subscriptionTier = oData.subscriptionTier || oData.subscriptionPlan || "tier1";
         }
       }
 
@@ -113,19 +117,30 @@ export async function generateManifest(req, res, db) {
         }
       }
 
+      // Enforce white-label gating: Tier 1 always falls back to generic brand
+      if (subscriptionTier === "tier1") {
+        displayName = "الطلب السريع";
+      }
+
       if (!displayName) {
         displayName = "الطلب السريع";
       }
 
       // Append suffix according to user current interface view
-      let suffix = " (عملاء)";
+      let suffix = "";
       if (view === "staff") {
         suffix = " (موظفين)";
       } else if (view === "admin") {
         suffix = " (إدارة)";
+      } else {
+        // For customer view (or empty): Only add suffix on Tier 1. 
+        // Tier 2 and Tier 3 should show the pure custom store name on the home screen.
+        if (subscriptionTier === "tier1") {
+          suffix = " (عملاء)";
+        }
       }
 
-      const formattedName = `${displayName}${suffix}`;
+      const formattedName = suffix ? `${displayName}${suffix}` : displayName;
       manifest.name = formattedName;
       manifest.short_name = formattedName;
 

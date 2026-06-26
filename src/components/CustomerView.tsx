@@ -797,7 +797,7 @@ export default function CustomerView({ orgId }: { orgId: string }) {
   }, [currency]);
 
   // Enforce SaaS Subscription Gating for Customer Interface
-  const finalRestaurantName = (subscriptionTier === "tier1" || subscriptionTier === "tier2") 
+  const finalRestaurantName = (subscriptionTier === "tier1") 
     ? "quick order @ الطلب السريع" 
     : restaurantName;
 
@@ -811,7 +811,7 @@ export default function CustomerView({ orgId }: { orgId: string }) {
 
   const theme = COLOR_THEMES[finalPrimaryColor] || COLOR_THEMES.emerald;
 
-  const finalWelcomeMessage = (subscriptionTier === "tier1" || subscriptionTier === "tier2") 
+  const finalWelcomeMessage = (subscriptionTier === "tier1") 
     ? "أهلاً بك في نظام الطلبات المتطور (quick order). اطلب الآن وتابع حالة طلبك مباشرة." 
     : welcomeMessage;
 

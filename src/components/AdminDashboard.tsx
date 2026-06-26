@@ -2841,20 +2841,20 @@ export default function AdminDashboard({ orgId, user }: { orgId: string, user: a
                     </label>
                     <input 
                       type="text"
-                      disabled={orgData?.subscriptionTier === "tier1" || orgData?.subscriptionTier === "tier2"}
+                      disabled={orgData?.subscriptionTier === "tier1"}
                       className={cn(
                         "w-full bg-slate-950 border rounded-xl px-4 py-3 text-white focus:outline-none transition-colors",
-                        (orgData?.subscriptionTier === "tier1" || orgData?.subscriptionTier === "tier2")
+                        (orgData?.subscriptionTier === "tier1")
                           ? "border-slate-900 opacity-60 text-slate-450 cursor-not-allowed bg-slate-950/80" 
                           : "border-slate-800 focus:border-indigo-500"
                       )}
-                      value={(orgData?.subscriptionTier === "tier1" || orgData?.subscriptionTier === "tier2") ? "quick order @ الطلب السريع" : restaurantName}
+                      value={(orgData?.subscriptionTier === "tier1") ? "quick order @ الطلب السريع" : restaurantName}
                       onChange={(e) => setRestaurantName(e.target.value)}
                       placeholder="أدخل اسم المطعم أو المقهى"
                     />
-                    {(orgData?.subscriptionTier === "tier1" || orgData?.subscriptionTier === "tier2") && (
+                    {(orgData?.subscriptionTier === "tier1") && (
                       <p className="text-[10px] text-amber-500 font-extrabold mt-1.5 leading-relaxed">
-                        ⚠️ اسم المنشأة مثبت تلقائياً على (<span className="font-sans font-black text-rose-400">quick order @ الطلب السريع</span>) في الباقتين الاقتصادية والمتقدمة. للتحكم الكامل تفضل بالترقية للباقة الاحترافية لربط اسم شعارك وهويتك المستقلة.
+                        ⚠️ اسم المنشأة مثبت تلقائياً على (<span className="font-sans font-black text-rose-400">quick order @ الطلب السريع</span>) في الباقة الاقتصادية. للتحكم الكامل تفضل بالترقية للباقة المتقدمة أو الاحترافية لربط اسم شعارك وهويتك المستقلة.
                       </p>
                     )}
                   </div>
@@ -3357,16 +3357,16 @@ export default function AdminDashboard({ orgId, user }: { orgId: string, user: a
                               {/* Name input - editable */}
                               <input
                                 type="text"
-                                disabled={orgData?.subscriptionTier !== "tier3"}
-                                value={orgData?.subscriptionTier !== "tier3" ? "quick order @ الطلب السريع" : restaurantName}
+                                disabled={orgData?.subscriptionTier === "tier1"}
+                                value={orgData?.subscriptionTier === "tier1" ? "quick order @ الطلب السريع" : restaurantName}
                                 onChange={(e) => setRestaurantName(e.target.value)}
                                 className={cn(
                                   "w-full text-center bg-transparent text-[13px] font-black transition-all mr-0 ml-0 border-0 border-b border-dashed px-2",
-                                  orgData?.subscriptionTier !== "tier3"
+                                  orgData?.subscriptionTier === "tier1"
                                     ? "text-slate-450 border-transparent cursor-not-allowed select-none"
                                     : "text-white hover:bg-slate-900/40 rounded focus:bg-slate-900 focus:outline-none border-transparent hover:border-white/30 truncate"
                                 )}
-                                title={orgData?.subscriptionTier !== "tier3" ? "تعديل اسم المنشأة مقفل في الباقة الحالية" : "تعديل اسم المنشأة المباشر"}
+                                title={orgData?.subscriptionTier === "tier1" ? "تعديل اسم المنشأة مقفل في الباقة الاقتصادية" : "تعديل اسم المنشأة المباشر"}
                                 placeholder="اسم المتجر"
                               />
 
