@@ -413,6 +413,7 @@ async function startServer() {
         // Fetch custom branding for all tiers
         let displayName = "الطلب السريع";
         let logoUrl = "/logo.png";
+        let subscriptionTier = "tier1";
 
         if (orgId && db) {
           try {
@@ -422,6 +423,7 @@ async function startServer() {
               const oData = orgDocSnap.data();
               if (oData) {
                 displayName = oData.name || "الطلب السريع";
+                subscriptionTier = oData.subscriptionTier || oData.subscriptionPlan || "tier1";
               }
             }
 
@@ -439,9 +441,19 @@ async function startServer() {
           }
         }
 
+        // Enforce white label gating
+        if (subscriptionTier === "tier1") {
+          displayName = "الطلب السريع";
+        }
+
         let formattedName = displayName;
         if (view === "customer") {
-          formattedName = `${displayName} (عملاء)`;
+          if (subscriptionTier === "tier1") {
+            formattedName = `${displayName} (عملاء)`;
+          } else {
+            // For Tier 2 & Tier 3, we want the pure store name
+            formattedName = displayName;
+          }
         } else if (view === "staff") {
           formattedName = `${displayName} (موظفين)`;
         } else if (view === "admin") {
@@ -518,6 +530,7 @@ async function startServer() {
           // Fetch custom branding for all tiers
           let displayName = "الطلب السريع";
           let logoUrl = "/logo.png";
+          let subscriptionTier = "tier1";
 
           if (orgId && db) {
             try {
@@ -527,6 +540,7 @@ async function startServer() {
                 const oData = orgDocSnap.data();
                 if (oData) {
                   displayName = oData.name || "الطلب السريع";
+                  subscriptionTier = oData.subscriptionTier || oData.subscriptionPlan || "tier1";
                 }
               }
 
@@ -544,9 +558,19 @@ async function startServer() {
             }
           }
 
+          // Enforce white label gating
+          if (subscriptionTier === "tier1") {
+            displayName = "الطلب السريع";
+          }
+
           let formattedName = displayName;
           if (view === "customer") {
-            formattedName = `${displayName} (عملاء)`;
+            if (subscriptionTier === "tier1") {
+              formattedName = `${displayName} (عملاء)`;
+            } else {
+              // For Tier 2 & Tier 3, we want the pure store name
+              formattedName = displayName;
+            }
           } else if (view === "staff") {
             formattedName = `${displayName} (موظفين)`;
           } else if (view === "admin") {
