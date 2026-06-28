@@ -406,8 +406,8 @@ async function startServer() {
 
         // Inject the exact dynamic manifest URL
         html = html.replace(
-          /<link id="pwa-manifest" rel="manifest" href="[^"]*"\s*\/?>/i,
-          `<link id="pwa-manifest" rel="manifest" href="${manifestUrl}" />`
+          /<link id="pwa-manifest"[^>]*href="[^"]*"[^>]*>/i,
+          `<link id="pwa-manifest" rel="manifest" crossorigin="use-credentials" href="${manifestUrl}" />`
         );
 
         // Fetch custom branding for all tiers
@@ -511,8 +511,8 @@ async function startServer() {
 
           // Inject the exact dynamic manifest URL
           html = html.replace(
-            /<link id="pwa-manifest" rel="manifest" href="[^"]*"\s*\/?>/i,
-            `<link id="pwa-manifest" rel="manifest" href="${manifestUrl}" />`
+            /<link id="pwa-manifest"[^>]*href="[^"]*"[^>]*>/i,
+            `<link id="pwa-manifest" rel="manifest" crossorigin="use-credentials" href="${manifestUrl}" />`
           );
 
           // Fetch custom branding for all tiers

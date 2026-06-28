@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, doc, getDocFromServer } from "firebase/firestore";
+import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, doc, getDocFromServer, memoryLocalCache } from "firebase/firestore";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 // @ts-ignore
 import firebaseConfigRaw from "../../firebase-applet-config.json";
@@ -19,11 +19,28 @@ try {
     const dbId = config.firestoreDatabaseId || config.databaseId;
     
     // Enable persistent local cache with multi-tab support to heavily minimize Firestore read billing
-    const firestoreSettings = {
-      localCache: persistentLocalCache({
-        tabManager: persistentMultipleTabManager(),
-      }),
-    };
+    // Fall back to in-memory cache inside iframes or when IndexedDB fails to prevent connection loss errors
+    let firestoreSettings: any = {};
+    const isIframe = typeof window !== "undefined" && window.self !== window.top;
+    
+    if (isIframe) {
+      firestoreSettings = {
+        localCache: memoryLocalCache()
+      };
+    } else {
+      try {
+        firestoreSettings = {
+          localCache: persistentLocalCache({
+            tabManager: persistentMultipleTabManager(),
+          }),
+        };
+      } catch (cacheErr) {
+        console.warn("Persistent cache initialization failed, using memory cache:", cacheErr);
+        firestoreSettings = {
+          localCache: memoryLocalCache()
+        };
+      }
+    }
 
     if (dbId) {
       db = initializeFirestore(app, firestoreSettings, dbId);
