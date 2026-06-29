@@ -407,7 +407,7 @@ async function startServer() {
         // Inject the exact dynamic manifest URL
         html = html.replace(
           /<link id="pwa-manifest"[^>]*href="[^"]*"[^>]*>/i,
-          `<link id="pwa-manifest" rel="manifest" crossorigin="use-credentials" href="${manifestUrl}" />`
+          `<link id="pwa-manifest" rel="manifest" href="${manifestUrl}" />`
         );
 
         // Fetch custom branding for all tiers
@@ -482,8 +482,10 @@ async function startServer() {
   } else {
     const distPath = path.join(process.cwd(), "dist");
     if (fs.existsSync(distPath)) {
-      // Dynamic HTML interceptor in production mode (MUST run BEFORE express.static)
-      app.get(["/", "/index.html"], async (req, res) => {
+      app.use(express.static(distPath));
+
+      // Dynamic HTML interceptor in production mode (runs for all non-static page requests)
+      app.get("*", async (req, res) => {
         let orgId = req.query.orgId as string;
         let view = req.query.view as string || "customer";
 
@@ -524,7 +526,7 @@ async function startServer() {
           // Inject the exact dynamic manifest URL
           html = html.replace(
             /<link id="pwa-manifest"[^>]*href="[^"]*"[^>]*>/i,
-            `<link id="pwa-manifest" rel="manifest" crossorigin="use-credentials" href="${manifestUrl}" />`
+            `<link id="pwa-manifest" rel="manifest" href="${manifestUrl}" />`
           );
 
           // Fetch custom branding for all tiers
@@ -594,11 +596,6 @@ async function startServer() {
           console.error("Error tailoring index.html:", err);
           res.sendFile(indexPath);
         }
-      });
-
-      app.use(express.static(distPath));
-      app.get("*", (req, res) => {
-        res.sendFile(path.join(distPath, "index.html"));
       });
     }
   }
