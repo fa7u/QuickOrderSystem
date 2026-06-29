@@ -482,10 +482,7 @@ async function startServer() {
   } else {
     const distPath = path.join(process.cwd(), "dist");
     if (fs.existsSync(distPath)) {
-      app.use(express.static(distPath));
-
-      // Dynamic HTML interceptor in production mode (runs for all non-static page requests)
-      app.get("*", async (req, res) => {
+      const handleDynamicIndex = async (req: any, res: any) => {
         let orgId = req.query.orgId as string;
         let view = req.query.view as string || "customer";
 
@@ -596,7 +593,15 @@ async function startServer() {
           console.error("Error tailoring index.html:", err);
           res.sendFile(indexPath);
         }
-      });
+      };
+
+      // Register index routes BEFORE express.static so they are not bypassed statically
+      app.get(["/", "/index.html"], handleDynamicIndex);
+
+      app.use(express.static(distPath));
+
+      // SPA Fallback for any other requests
+      app.get("*", handleDynamicIndex);
     }
   }
 
