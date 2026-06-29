@@ -43,6 +43,10 @@ export async function generateManifest(req, res, db) {
     }
   }
 
+  if (view === "superadmin" || view === "proposal") {
+    orgId = "";
+  }
+
   // Base manifest fallback template
   const baseManifestPath = path.join(process.cwd(), "public", "manifest.json");
   let manifest = {

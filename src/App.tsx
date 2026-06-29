@@ -45,6 +45,10 @@ export default function App() {
       v = cookies['quickorder_last_view'] || localStorage.getItem('quickorder_last_view') || 'customer';
     }
     
+    if (v === 'superadmin' || v === 'proposal') {
+      id = null;
+    }
+    
     return {
       view: (v || 'customer') as 'customer' | 'staff' | 'admin' | 'superadmin' | 'proposal',
       orgId: id || null

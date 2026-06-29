@@ -382,6 +382,10 @@ async function startServer() {
       if (!orgId) orgId = cookies["quickorder_last_org_id"];
       if (!view) view = cookies["quickorder_last_view"] || "customer";
 
+      if (view === "superadmin" || view === "proposal") {
+        orgId = "";
+      }
+
       // Dynamically preserve state by setting updated HTTP cookies instantly
       if (req.query.orgId) {
         res.cookie("quickorder_last_org_id", req.query.orgId, { maxAge: 31536000000, path: "/", sameSite: "lax" });
@@ -499,6 +503,10 @@ async function startServer() {
 
         if (!orgId) orgId = cookies["quickorder_last_org_id"];
         if (!view) view = cookies["quickorder_last_view"] || "customer";
+
+        if (view === "superadmin" || view === "proposal") {
+          orgId = "";
+        }
 
         // Dynamically preserve state by setting updated HTTP cookies instantly
         if (req.query.orgId) {
